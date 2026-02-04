@@ -86,11 +86,6 @@
         <input type="text" id="card_border_color_hex" value="#ffffff" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" oninput="document.getElementById('card_border_color').value = this.value" />
       </div>
     </div>
-    
-    <div>
-      <label for="use_text_shadow" class="form-label" style="font-size: 0.9em;">
-        <input type="checkbox" id="use_text_shadow" name="use_text_shadow" /> Add Text Shadow (improves readability)
-      </label>
     </div>
   </div>
 </div>
@@ -353,8 +348,8 @@
       </div>
       <div class="card-row-2">
         <input type="text" placeholder="Unit (optional)" class="ha-unit" value="${data.unit || ""}" oninput="updateCardsJson()">
-        <input type="number" placeholder="Row" class="ha-row" min="1" max="5" value="${data.row || ""}" oninput="updateCardsJson()">
-        <input type="number" placeholder="Col" class="ha-col" min="1" max="3" value="${data.col || ""}" oninput="updateCardsJson()">
+        <input type="number" placeholder="Row" class="ha-row" min="1" max="3" value="${data.row || ""}" oninput="updateCardsJson()">
+        <input type="number" placeholder="Col" class="ha-col" min="1" max="4" value="${data.col || ""}" oninput="updateCardsJson()">
       </div>
       <span class="remove-card" onclick="this.parentElement.remove(); updateCardsJson();">×</span>
     `;
@@ -547,9 +542,6 @@
       if (pluginSettings.card_border_color) {
         document.getElementById("card_border_color").value = pluginSettings.card_border_color;
         document.getElementById("card_border_color_hex").value = pluginSettings.card_border_color;
-      }
-      if (pluginSettings.use_text_shadow !== undefined) {
-        document.getElementById("use_text_shadow").checked = pluginSettings.use_text_shadow;
       }
     }
   });

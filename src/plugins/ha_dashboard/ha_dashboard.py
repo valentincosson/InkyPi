@@ -92,8 +92,7 @@ class HADashboard(BasePlugin):
             "card_text_color": settings.get('card_text_color'),
             "card_bg_color": settings.get('card_bg_color'),
             "card_bg_opacity": float(settings.get('card_bg_opacity', 0.5)),
-            "card_border_color": settings.get('card_border_color'),
-            "use_text_shadow": settings.get('use_text_shadow', False)
+            "card_border_color": settings.get('card_border_color')
         }
 
         dimensions = device_config.get_resolution()
