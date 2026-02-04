@@ -1,0 +1,72 @@
+.dashboard-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.cards-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 15px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    background: var(--card-bg-color, rgba(255, 255, 255, 0.5));
+    border: 1px solid var(--card-border-color, rgba(255, 255, 255, 0.3));
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    color: var(--card-text-color, white);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.card-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    opacity: 0.9;
+    text-align: center;
+    text-shadow: var(--text-shadow, none);
+}
+
+.card-value {
+    font-family: 'DS-Digital', sans-serif;
+    font-size: 32px;
+    font-weight: normal;
+    text-shadow: var(--text-shadow, none);
+}
+
+.card-unit {
+    font-size: 12px;
+    vertical-align: super;
+    margin-left: 2px;
+}
+
+.refresh-time {
+    font-family: 'Jost', sans-serif;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    color: white;
+    font-size: 10px;
+    opacity: 0.7;
+    z-index: 3;
+    text-shadow: var(--text-shadow, none);
+}

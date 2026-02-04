@@ -1,0 +1,43 @@
+{% extends "plugin.html" %}
+{% block content %}
+<style>
+:root {
+    {% if card_text_color %}
+    --card-text-color: {{ card_text_color }};
+    {% endif %}
+    
+    {% if card_bg_color and card_bg_opacity is not none %}
+    --card-bg-color: {{ card_bg_color }}{{ '%02x' % (card_bg_opacity * 255)|int }};
+    {% elif card_bg_color %}
+    --card-bg-color: {{ card_bg_color }};
+    {% endif %}
+    
+    {% if card_border_color %}
+    --card-border-color: {{ card_border_color }};
+    {% endif %}
+    
+    {% if use_text_shadow %}
+    --text-shadow: 0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.5);
+    {% endif %}
+}
+</style>
+<div class="dashboard-container">
+    <div class="cards-grid">
+        {% for card in cards %}
+        <div class="card" style="grid-column: {{ card.col if card.col else 'auto' }}; grid-row: {{ card.row if card.row else 'auto' }};">
+            <span class="card-label">{{ card.label if card.label else card.friendly_name }}</span>
+            <span class="card-value">
+                {{ card.value }}
+                {% if card.unit %}
+                <span class="card-unit">{{ card.unit }}</span>
+                {% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if show_refresh_time %}
+        <div class="refresh-time">Updated: {{ last_refresh_time }}</div>
+    {% endif %}
+</div>
+{% endblock %}

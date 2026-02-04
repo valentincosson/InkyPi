@@ -1,0 +1,556 @@
+<!-- Entity Browser Modal -->
+<div id="entity-modal" class="entity-modal">
+  <div class="entity-modal-content">
+    <div class="entity-modal-header">
+      <h2>Select an Entity</h2>
+      <span class="entity-modal-close" onclick="closeEntityBrowser()">×</span>
+    </div>
+    <div class="entity-search">
+      <input type="text" id="entity-search-input" placeholder="Search entities..." oninput="searchEntities()">
+    </div>
+    <div class="entity-modal-body">
+      <!-- Entities will be rendered here -->
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="ha_url" class="form-label">Home Assistant URL:</label>
+  <div class="url-grid">
+    <input
+      type="text"
+      id="ha_url"
+      name="ha_url"
+      class="form-input"
+      placeholder="http://homeassistant.local:8123"
+      value="http://homeassistant.local:8123"
+    />
+    <button type="button" id="load-entities" class="action-button compact">
+      Fetch Entities
+    </button>
+  </div>
+  <span class="api-key-label">
+    Ensure <b>HOME_ASSISTANT_TOKEN</b> is set in your API Keys.
+  </span>
+</div>
+
+<div class="form-group">
+  <label class="form-label">Dashboard Cards (max 15):</label>
+  <div id="cards-container"></div>
+  <button type="button" id="add-card" class="action-button compact">
+    + Add Card
+  </button>
+</div>
+
+<div class="form-group">
+  <label for="show_refresh_time" class="form-label">
+    Show Refresh Time:
+  </label>
+  <input
+    type="checkbox"
+    id="show_refresh_time"
+    name="show_refresh_time"
+    class="form-input"
+  />
+</div>
+
+<div class="form-group">
+  <label class="form-label">Card Appearance (for e-ink display):</label>
+  
+  <div style="margin-top: 10px; display: grid; gap: 15px;">
+    <div>
+      <label for="card_text_color" class="form-label" style="font-size: 0.9em;">Text Color:</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+        <input type="color" id="card_text_color" name="card_text_color" value="#ffffff" style="width: 60px; height: 35px; cursor: pointer;" />
+        <input type="text" id="card_text_color_hex" value="#ffffff" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" oninput="document.getElementById('card_text_color').value = this.value" />
+      </div>
+    </div>
+    
+    <div>
+      <label for="card_bg_color" class="form-label" style="font-size: 0.9em;">Card Background Color:</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+        <input type="color" id="card_bg_color" name="card_bg_color" value="#ffffff" style="width: 60px; height: 35px; cursor: pointer;" />
+        <input type="text" id="card_bg_color_hex" value="#ffffff" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" oninput="document.getElementById('card_bg_color').value = this.value" />
+      </div>
+    </div>
+    
+    <div>
+      <label for="card_bg_opacity" class="form-label" style="font-size: 0.9em;">Card Background Opacity: <span id="opacity-value">0.5</span></label>
+      <input type="range" id="card_bg_opacity" name="card_bg_opacity" min="0" max="1" step="0.1" value="0.5" style="width: 100%; margin-top: 5px;" oninput="document.getElementById('opacity-value').textContent = this.value" />
+    </div>
+    
+    <div>
+      <label for="card_border_color" class="form-label" style="font-size: 0.9em;">Card Border Color:</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+        <input type="color" id="card_border_color" name="card_border_color" value="#ffffff" style="width: 60px; height: 35px; cursor: pointer;" />
+        <input type="text" id="card_border_color_hex" value="#ffffff" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" oninput="document.getElementById('card_border_color').value = this.value" />
+      </div>
+    </div>
+    
+    <div>
+      <label for="use_text_shadow" class="form-label" style="font-size: 0.9em;">
+        <input type="checkbox" id="use_text_shadow" name="use_text_shadow" /> Add Text Shadow (improves readability)
+      </label>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="cards_json" name="cards_json" />
+
+<style>
+  .url-grid {
+    display: grid;
+    grid-template-columns: 100% max-content;
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  .api-key-label {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: #fff !important;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  #cards-container {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  #add-card {
+    margin-top: 10px;
+  }
+
+  .card-entry {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 10px;
+  }
+
+  .remove-card {
+    grid-column: 2;
+    grid-row: 1;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 5px;
+    font-weight: bold;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .card-row-1 {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    position: relative;
+  }
+
+  .card-row-2 {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 80px 80px;
+    gap: 10px;
+  }
+
+  .card-entry input,
+  .card-entry select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  /* Entity Browser Modal */
+  .entity-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .entity-modal.active {
+    display: flex;
+  }
+
+  .entity-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .entity-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .entity-modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.4em;
+  }
+
+  .entity-modal-close {
+    font-size: 2em;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 0 10px;
+  }
+
+  .entity-modal-close:hover {
+    color: #333;
+  }
+
+  .entity-search {
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .entity-search input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+  }
+
+  .entity-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .entity-domain {
+    margin-bottom: 25px;
+  }
+
+  .entity-domain-title {
+    font-weight: bold;
+    color: #1976d2;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #1976d2;
+    text-transform: capitalize;
+  }
+
+  .entity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+
+  .entity-card {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f9f9f9;
+  }
+
+  .entity-card:hover {
+    background: #e3f2fd;
+    border-color: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .entity-card-name {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 0.95em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .entity-card-id {
+    font-size: 0.85em;
+    color: #666;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .entity-browse-btn {
+    margin-left: 8px;
+    padding: 8px 12px;
+    background: #1976d2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+
+  .entity-browse-btn:hover {
+    background: #1565c0;
+  }
+
+  .entity-browse-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .no-entities-msg {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 1.1em;
+  }
+</style>
+
+<script>
+  const container = document.getElementById("cards-container");
+  const addButton = document.getElementById("add-card");
+  const hiddenInput = document.getElementById("cards_json");
+  const loadEntitiesButton = document.getElementById("load-entities");
+  let availableEntities = [];
+
+  function createCardEntry(data = {}) {
+    const div = document.createElement("div");
+    div.className = "card-entry";
+    const entryId = "card-" + Math.random().toString(36).substr(2, 9);
+    div.id = entryId;
+
+    div.innerHTML = `
+      <div class="card-row-1">
+        <div style="display: flex; gap: 5px;">
+          <input type="text" placeholder="Entity ID (e.g. sensor.temp)" class="ha-entity" value="${data.entity_id || ""}" oninput="updateCardsJson()" style="flex: 1;">
+          <button type="button" class="entity-browse-btn" onclick="openEntityBrowser(this)" ${availableEntities.length === 0 ? 'disabled' : ''}>Browse</button>
+        </div>
+        <input type="text" placeholder="Label (optional)" class="ha-label" value="${data.label || ""}" oninput="updateCardsJson()">
+      </div>
+      <div class="card-row-2">
+        <input type="text" placeholder="Unit (optional)" class="ha-unit" value="${data.unit || ""}" oninput="updateCardsJson()">
+        <input type="number" placeholder="Row" class="ha-row" min="1" max="5" value="${data.row || ""}" oninput="updateCardsJson()">
+        <input type="number" placeholder="Col" class="ha-col" min="1" max="3" value="${data.col || ""}" oninput="updateCardsJson()">
+      </div>
+      <span class="remove-card" onclick="this.parentElement.remove(); updateCardsJson();">×</span>
+    `;
+    container.appendChild(div);
+  }
+
+  let currentEntityInput = null;
+
+  function openEntityBrowser(button) {
+    if (availableEntities.length === 0) {
+      alert("Please fetch entities first!");
+      return;
+    }
+    currentEntityInput = button.parentElement.querySelector(".ha-entity");
+    const modal = document.getElementById("entity-modal");
+    modal.classList.add("active");
+    renderEntityBrowser(availableEntities);
+  }
+
+  function closeEntityBrowser() {
+    const modal = document.getElementById("entity-modal");
+    modal.classList.remove("active");
+    currentEntityInput = null;
+  }
+
+  function selectEntity(entityId) {
+    if (currentEntityInput) {
+      currentEntityInput.value = entityId;
+      updateCardsJson();
+    }
+    closeEntityBrowser();
+  }
+
+  function groupEntitiesByDomain(entities) {
+    const grouped = {};
+    entities.forEach(entity => {
+      const domain = entity.entity_id.split(".")[0];
+      if (!grouped[domain]) {
+        grouped[domain] = [];
+      }
+      grouped[domain].push(entity);
+    });
+    return grouped;
+  }
+
+  function renderEntityBrowser(entities) {
+    const modalBody = document.querySelector(".entity-modal-body");
+    const grouped = groupEntitiesByDomain(entities);
+    const sortedDomains = Object.keys(grouped).sort();
+
+    if (entities.length === 0) {
+      modalBody.innerHTML = '<div class="no-entities-msg">No entities found</div>';
+      return;
+    }
+
+    let html = "";
+    sortedDomains.forEach(domain => {
+      html += `
+        <div class="entity-domain">
+          <div class="entity-domain-title">${domain} (${grouped[domain].length})</div>
+          <div class="entity-grid">
+      `;
+      grouped[domain].forEach(entity => {
+        html += `
+          <div class="entity-card" onclick="selectEntity('${entity.entity_id}')">
+            <div class="entity-card-name" title="${entity.friendly_name}">${entity.friendly_name}</div>
+            <div class="entity-card-id" title="${entity.entity_id}">${entity.entity_id}</div>
+          </div>
+        `;
+      });
+      html += `
+          </div>
+        </div>
+      `;
+    });
+
+    modalBody.innerHTML = html;
+  }
+
+  function searchEntities() {
+    const searchInput = document.getElementById("entity-search-input");
+    const query = searchInput.value.toLowerCase();
+    
+    if (query === "") {
+      renderEntityBrowser(availableEntities);
+      return;
+    }
+
+    const filtered = availableEntities.filter(e => 
+      e.entity_id.toLowerCase().includes(query) ||
+      e.friendly_name.toLowerCase().includes(query)
+    );
+    renderEntityBrowser(filtered);
+  }
+
+  function updateCardsJson() {
+    const cards = [];
+    document.querySelectorAll(".card-entry").forEach((entry) => {
+      cards.push({
+        entity_id: entry.querySelector(".ha-entity").value,
+        label: entry.querySelector(".ha-label").value,
+        unit: entry.querySelector(".ha-unit").value,
+        row: entry.querySelector(".ha-row").value,
+        col: entry.querySelector(".ha-col").value,
+      });
+    });
+    hiddenInput.value = JSON.stringify(cards);
+  }
+
+  loadEntitiesButton.addEventListener("click", async () => {
+    const url = document.getElementById("ha_url").value;
+    const token = "";
+
+    loadEntitiesButton.disabled = true;
+    loadEntitiesButton.textContent = "Loading...";
+
+    try {
+      const response = await fetch("/plugin/ha/entities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, token }),
+      });
+      const data = await response.json();
+      if (data.error) {
+        alert("Error: " + data.error);
+      } else {
+        availableEntities = data;
+        // Enable all browse buttons
+        document.querySelectorAll(".entity-browse-btn").forEach(btn => {
+          btn.disabled = false;
+        });
+        alert(`Successfully loaded ${data.length} entities!`);
+      }
+    } catch (e) {
+      alert("Failed to load entities: " + e);
+    } finally {
+      loadEntitiesButton.disabled = false;
+      loadEntitiesButton.textContent = "Fetch Entities";
+    }
+  });
+
+  addButton.addEventListener("click", () => {
+    if (document.querySelectorAll(".card-entry").length < 15) {
+      createCardEntry();
+      updateCardsJson();
+    } else {
+      alert("Max 15 cards allowed.");
+    }
+  });
+
+  // Sync color inputs
+  document.getElementById("card_text_color").addEventListener("input", (e) => {
+    document.getElementById("card_text_color_hex").value = e.target.value;
+  });
+  document.getElementById("card_bg_color").addEventListener("input", (e) => {
+    document.getElementById("card_bg_color_hex").value = e.target.value;
+  });
+  document.getElementById("card_border_color").addEventListener("input", (e) => {
+    document.getElementById("card_border_color_hex").value = e.target.value;
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof loadPluginSettings !== "undefined" && loadPluginSettings) {
+      document.getElementById("ha_url").value =
+        pluginSettings.ha_url || "http://homeassistant.local:8123";
+
+      if (pluginSettings.cards_json) {
+        try {
+          const cards = JSON.parse(pluginSettings.cards_json);
+          cards.forEach((card) => createCardEntry(card));
+          hiddenInput.value = pluginSettings.cards_json;
+        } catch (e) {
+          console.error("Failed to parse cards_json", e);
+        }
+      }
+      
+      // Load color settings
+      if (pluginSettings.card_text_color) {
+        document.getElementById("card_text_color").value = pluginSettings.card_text_color;
+        document.getElementById("card_text_color_hex").value = pluginSettings.card_text_color;
+      }
+      if (pluginSettings.card_bg_color) {
+        document.getElementById("card_bg_color").value = pluginSettings.card_bg_color;
+        document.getElementById("card_bg_color_hex").value = pluginSettings.card_bg_color;
+      }
+      if (pluginSettings.card_bg_opacity !== undefined) {
+        document.getElementById("card_bg_opacity").value = pluginSettings.card_bg_opacity;
+        document.getElementById("opacity-value").textContent = pluginSettings.card_bg_opacity;
+      }
+      if (pluginSettings.card_border_color) {
+        document.getElementById("card_border_color").value = pluginSettings.card_border_color;
+        document.getElementById("card_border_color_hex").value = pluginSettings.card_border_color;
+      }
+      if (pluginSettings.use_text_shadow !== undefined) {
+        document.getElementById("use_text_shadow").checked = pluginSettings.use_text_shadow;
+      }
+    }
+  });
+</script>

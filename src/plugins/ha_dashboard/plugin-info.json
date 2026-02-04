@@ -1,0 +1,5 @@
+{
+    "display_name": "Home Assistant Dashboard",
+    "id": "ha_dashboard",
+    "class": "HADashboard"
+}

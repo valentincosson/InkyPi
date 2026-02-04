@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app, render_template, send_from_directory
 from plugins.plugin_registry import get_plugin_instance
 from utils.app_utils import resolve_path, handle_request_files, parse_form
+from utils.ha_connector import HAConnector
 from refresh_task import ManualRefresh, PlaylistRefresh
 import json
 import os
@@ -256,3 +257,36 @@ def update_now():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
     return jsonify({"success": True, "message": "Display updated"}), 200
+
+@plugin_bp.route('/plugin/ha/entities', methods=['POST'])
+def get_ha_entities():
+    data = request.json
+    url = data.get('url')
+    token = data.get('token')
+
+    if not url or not token:
+        # Try to load from env if not provided (e.g. testing)
+        device_config = current_app.config['DEVICE_CONFIG']
+        token = token or device_config.load_env_key("HOME_ASSISTANT_TOKEN")
+
+    if not url or not token:
+        return jsonify({"error": "Missing URL or Token"}), 400
+
+    try:
+        ha = HAConnector(url, token)
+        states = ha.get_states()
+        if states is None:
+            return jsonify({"error": "Failed to fetch states from Home Assistant"}), 500
+        
+        # Filter and simplify entities for the UI
+        entities = []
+        for s in states:
+            entities.append({
+                "entity_id": s.get("entity_id"),
+                "friendly_name": s.get("attributes", {}).get("friendly_name", s.get("entity_id"))
+            })
+        
+        return jsonify(entities)
+    except Exception as e:
+        logger.exception("Error fetching HA entities")
+        return jsonify({"error": str(e)}), 500
