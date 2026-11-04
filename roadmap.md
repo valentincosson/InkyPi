@@ -25,6 +25,17 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | 6. Playlists | Frise sur 24 h, priorité visible, réordonnancement, bugs corrigés | À faire |
 | 7. Aperçu sans envoi à l'écran | Génération seule d'une image | À faire |
 
+## Défauts relevés par la capture des formulaires
+
+Les captures de `tests/snapshots/plugin_forms/` décrivent l'existant, défauts compris. Les formulaires du lot 4 ne doivent pas les reproduire :
+
+- **Option désactivée sans le vouloir :** dans `rss`, `ai_image`, `image_album` et `image_upload`, une option activée se réaffiche cochée mais garde la valeur `false`. Réenregistrer sans y toucher la désactive.
+- **`weather` :** `graphIconStep` n'est pas restauré à la réouverture et revient à `2`.
+- **`newspaper` :** `locationSearch` n'est pas restauré à la réouverture.
+- **`image_album` :** `updateTitleOptions` est appelée mais n'est définie nulle part.
+
+La capture remplit seulement les champs présents à l'ouverture : les lignes ajoutées dynamiquement (`calendar`, `todo_list`) et les fichiers envoyés (`image_upload`) restent à couvrir au lot 4.
+
 ## Plus tard
 
 - **Écran personnalisé :** choisir entre des zones remplies par des plugins existants, des éléments libres, ou les deux. Un essai sur Mac a assemblé trois plugins en zones sans modifier le moteur, mais certains plugins débordent à petite taille et le coût de rendu sur un Pi Zero 2 reste inconnu.

@@ -1,0 +1,349 @@
+{
+  "defaults": [
+    [
+      "title",
+      ""
+    ],
+    [
+      "listStyle",
+      "disc"
+    ],
+    [
+      "fontSize",
+      "normal"
+    ],
+    [
+      "list-title[]",
+      ""
+    ],
+    [
+      "list[]",
+      ""
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      ""
+    ],
+    [
+      "bottomMargin",
+      ""
+    ],
+    [
+      "leftMargin",
+      ""
+    ],
+    [
+      "rightMargin",
+      ""
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#000000"
+    ],
+    [
+      "plugin_id",
+      "todo_list"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "listStyle",
+      "lower-alpha"
+    ],
+    [
+      "fontSize",
+      "x-large"
+    ],
+    [
+      "list-title[]",
+      "sample list-title[]"
+    ],
+    [
+      "list[]",
+      "sample list[]"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "todo_list"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "listStyle",
+        "lower-alpha"
+      ],
+      [
+        "fontSize",
+        "x-large"
+      ],
+      [
+        "list-title[]",
+        "sample list-title[]"
+      ],
+      [
+        "list[]",
+        "sample list[]"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "todo_list"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "listStyle",
+      "lower-alpha"
+    ],
+    [
+      "fontSize",
+      "x-large"
+    ],
+    [
+      "list-title[]",
+      "sample list-title[]"
+    ],
+    [
+      "list[]",
+      "sample list[]"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "todo_list"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "backgroundColor": "#123456",
+    "backgroundImageFile": "file:",
+    "backgroundOption": "image",
+    "bottomMargin": "10",
+    "fontSize": "x-large",
+    "leftMargin": "10",
+    "list-title[]": [
+      "sample list-title[]"
+    ],
+    "listStyle": "lower-alpha",
+    "list[]": [
+      "sample list[]"
+    ],
+    "rightMargin": "10",
+    "selectedFrame": "None",
+    "textColor": "#123456",
+    "title": "sample title",
+    "topMargin": "10"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "listStyle",
+        "lower-alpha"
+      ],
+      [
+        "fontSize",
+        "x-large"
+      ],
+      [
+        "list-title[]",
+        "sample list-title[]"
+      ],
+      [
+        "list[]",
+        "sample list[]"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "todo_list"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

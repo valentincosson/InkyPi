@@ -1,0 +1,143 @@
+{
+  "defaults": [
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "blur"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "folder_path",
+      ""
+    ],
+    [
+      "plugin_id",
+      "image_folder"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "folder_path",
+      "sample folder_path"
+    ],
+    [
+      "plugin_id",
+      "image_folder"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "folder_path",
+        "sample folder_path"
+      ],
+      [
+        "plugin_id",
+        "image_folder"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "folder_path",
+      "sample folder_path"
+    ],
+    [
+      "plugin_id",
+      "image_folder"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "backgroundColor": "#123456",
+    "backgroundOption": "color",
+    "folder_path": "sample folder_path",
+    "padImage": "false"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "folder_path",
+        "sample folder_path"
+      ],
+      [
+        "plugin_id",
+        "image_folder"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

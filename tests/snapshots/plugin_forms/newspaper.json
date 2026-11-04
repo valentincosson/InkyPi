@@ -1,0 +1,106 @@
+{
+  "defaults": [
+    [
+      "newspaperName",
+      ""
+    ],
+    [
+      "newspaperSlug",
+      ""
+    ],
+    [
+      "locationSearch",
+      ""
+    ],
+    [
+      "plugin_id",
+      "newspaper"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "newspaperName",
+      "sample newspaperName"
+    ],
+    [
+      "newspaperSlug",
+      ""
+    ],
+    [
+      "locationSearch",
+      ""
+    ],
+    [
+      "plugin_id",
+      "newspaper"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "newspaperName",
+        "sample newspaperName"
+      ],
+      [
+        "newspaperSlug",
+        ""
+      ],
+      [
+        "locationSearch",
+        ""
+      ],
+      [
+        "plugin_id",
+        "newspaper"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "newspaperName",
+      "sample newspaperName"
+    ],
+    [
+      "newspaperSlug",
+      ""
+    ],
+    [
+      "locationSearch",
+      "sample locationSearch"
+    ],
+    [
+      "plugin_id",
+      "newspaper"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "locationSearch": "sample locationSearch",
+    "newspaperName": "sample newspaperName",
+    "newspaperSlug": ""
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "newspaperName",
+        "sample newspaperName"
+      ],
+      [
+        "newspaperSlug",
+        ""
+      ],
+      [
+        "locationSearch",
+        "sample locationSearch"
+      ],
+      [
+        "plugin_id",
+        "newspaper"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

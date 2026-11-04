@@ -1,0 +1,204 @@
+{
+  "defaults": [
+    [
+      "albumProvider",
+      "Immich"
+    ],
+    [
+      "url",
+      ""
+    ],
+    [
+      "album",
+      ""
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "blur"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "plugin_id",
+      "image_album"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "albumProvider",
+      "Immich"
+    ],
+    [
+      "url",
+      "sample url"
+    ],
+    [
+      "album",
+      "sample album"
+    ],
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "randomize",
+      "false"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "image_album"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "albumProvider",
+        "Immich"
+      ],
+      [
+        "url",
+        "sample url"
+      ],
+      [
+        "album",
+        "sample album"
+      ],
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "randomize",
+        "false"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "image_album"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "albumProvider",
+      "Immich"
+    ],
+    [
+      "url",
+      "sample url"
+    ],
+    [
+      "album",
+      "sample album"
+    ],
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "randomize",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "image_album"
+    ]
+  ],
+  "page_errors": [
+    "updateTitleOptions is not defined"
+  ],
+  "stored_settings": {
+    "album": "sample album",
+    "albumProvider": "Immich",
+    "backgroundColor": "#123456",
+    "backgroundOption": "color",
+    "padImage": "false",
+    "randomize": "true",
+    "url": "sample url"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "albumProvider",
+        "Immich"
+      ],
+      [
+        "url",
+        "sample url"
+      ],
+      [
+        "album",
+        "sample album"
+      ],
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "randomize",
+        "true"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "image_album"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

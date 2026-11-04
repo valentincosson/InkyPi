@@ -1,0 +1,320 @@
+{
+  "defaults": [
+    [
+      "title",
+      ""
+    ],
+    [
+      "fontSize",
+      "normal"
+    ],
+    [
+      "feedUrl",
+      ""
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      ""
+    ],
+    [
+      "bottomMargin",
+      ""
+    ],
+    [
+      "leftMargin",
+      ""
+    ],
+    [
+      "rightMargin",
+      ""
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#000000"
+    ],
+    [
+      "plugin_id",
+      "rss"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "includeImages",
+      "false"
+    ],
+    [
+      "fontSize",
+      "x-large"
+    ],
+    [
+      "feedUrl",
+      "sample feedUrl"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "rss"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "includeImages",
+        "false"
+      ],
+      [
+        "fontSize",
+        "x-large"
+      ],
+      [
+        "feedUrl",
+        "sample feedUrl"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "rss"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "includeImages",
+      "true"
+    ],
+    [
+      "fontSize",
+      "x-large"
+    ],
+    [
+      "feedUrl",
+      "sample feedUrl"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "rss"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "backgroundColor": "#123456",
+    "backgroundImageFile": "file:",
+    "backgroundOption": "image",
+    "bottomMargin": "10",
+    "feedUrl": "sample feedUrl",
+    "fontSize": "x-large",
+    "includeImages": "true",
+    "leftMargin": "10",
+    "rightMargin": "10",
+    "selectedFrame": "None",
+    "textColor": "#123456",
+    "title": "sample title",
+    "topMargin": "10"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "includeImages",
+        "true"
+      ],
+      [
+        "fontSize",
+        "x-large"
+      ],
+      [
+        "feedUrl",
+        "sample feedUrl"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "rss"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

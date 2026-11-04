@@ -1,4 +1,9 @@
-"""Une mise à jour par git doit conserver les données locales d'une installation."""
+"""Une mise à jour par git doit conserver les données locales d'une installation.
+
+Ces tests vérifient les règles d'ignore et leur effet sur `git pull` et `git clean`. Ils n'exécutent
+pas install/update.sh, et ne couvrent pas une installation antérieure à décembre 2024, quand
+src/config/device.json était encore suivi par git.
+"""
 import os
 import shutil
 import subprocess
@@ -23,6 +28,7 @@ def git(cwd, *args):
         check=True,
         capture_output=True,
         text=True,
+        env={**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_SYSTEM": os.devnull},
     ).stdout
 
 

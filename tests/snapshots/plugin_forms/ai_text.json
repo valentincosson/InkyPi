@@ -1,0 +1,303 @@
+{
+  "defaults": [
+    [
+      "title",
+      ""
+    ],
+    [
+      "textModel",
+      "gpt-4o-mini"
+    ],
+    [
+      "textPrompt",
+      ""
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      ""
+    ],
+    [
+      "bottomMargin",
+      ""
+    ],
+    [
+      "leftMargin",
+      ""
+    ],
+    [
+      "rightMargin",
+      ""
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#000000"
+    ],
+    [
+      "plugin_id",
+      "ai_text"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "textModel",
+      "gpt-5-nano"
+    ],
+    [
+      "textPrompt",
+      "sample textPrompt"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "ai_text"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "textModel",
+        "gpt-5-nano"
+      ],
+      [
+        "textPrompt",
+        "sample textPrompt"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "ai_text"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "title",
+      "sample title"
+    ],
+    [
+      "textModel",
+      "gpt-5-nano"
+    ],
+    [
+      "textPrompt",
+      "sample textPrompt"
+    ],
+    [
+      "selectedFrame",
+      "None"
+    ],
+    [
+      "topMargin",
+      "10"
+    ],
+    [
+      "bottomMargin",
+      "10"
+    ],
+    [
+      "leftMargin",
+      "10"
+    ],
+    [
+      "rightMargin",
+      "10"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "backgroundOption",
+      "image"
+    ],
+    [
+      "backgroundImageFile",
+      "file:"
+    ],
+    [
+      "textColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "ai_text"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "backgroundColor": "#123456",
+    "backgroundImageFile": "file:",
+    "backgroundOption": "image",
+    "bottomMargin": "10",
+    "leftMargin": "10",
+    "rightMargin": "10",
+    "selectedFrame": "None",
+    "textColor": "#123456",
+    "textModel": "gpt-5-nano",
+    "textPrompt": "sample textPrompt",
+    "title": "sample title",
+    "topMargin": "10"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "title",
+        "sample title"
+      ],
+      [
+        "textModel",
+        "gpt-5-nano"
+      ],
+      [
+        "textPrompt",
+        "sample textPrompt"
+      ],
+      [
+        "selectedFrame",
+        "None"
+      ],
+      [
+        "topMargin",
+        "10"
+      ],
+      [
+        "bottomMargin",
+        "10"
+      ],
+      [
+        "leftMargin",
+        "10"
+      ],
+      [
+        "rightMargin",
+        "10"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "backgroundOption",
+        "image"
+      ],
+      [
+        "backgroundImageFile",
+        "file:"
+      ],
+      [
+        "textColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "ai_text"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

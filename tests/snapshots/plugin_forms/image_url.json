@@ -1,0 +1,64 @@
+{
+  "defaults": [
+    [
+      "url",
+      ""
+    ],
+    [
+      "plugin_id",
+      "image_url"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "url",
+      "sample url"
+    ],
+    [
+      "plugin_id",
+      "image_url"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "url",
+        "sample url"
+      ],
+      [
+        "plugin_id",
+        "image_url"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "url",
+      "sample url"
+    ],
+    [
+      "plugin_id",
+      "image_url"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "url": "sample url"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "url",
+        "sample url"
+      ],
+      [
+        "plugin_id",
+        "image_url"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}
