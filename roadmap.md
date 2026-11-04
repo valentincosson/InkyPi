@@ -16,8 +16,8 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 
 | Lot | Contenu | État |
 |---|---|---|
-| 0. Filet de sécurité | Roadmap, tests, capture des formulaires, environnement Mac, écriture atomique de la configuration | En cours |
-| 1. Design | Propositions construites sur shadcn, choix, review | À faire |
+| 0. Filet de sécurité | Roadmap, tests, capture des formulaires, environnement Mac, écriture atomique de la configuration | Terminé |
+| 1. Design | Propositions construites sur shadcn, choix, review | En cours |
 | 2. Socle | Surcouche, React, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi | À faire |
 | 3. Réglages et clés d'API | Premières pages React | À faire |
 | 4. Formulaires de plugins | Moteur générique, portage du plus simple au plus complexe, repli sur l'ancienne page | À faire |
