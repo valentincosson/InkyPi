@@ -180,4 +180,3 @@ mock_display_output/
 
 # Environnement de développement local
 /.dev/
-/.playwright-mcp/

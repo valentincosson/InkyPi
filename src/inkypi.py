@@ -44,7 +44,7 @@ args = parser.parse_args()
 
 # Set development mode settings
 if args.dev:
-    Config.config_file = os.path.join(Config.BASE_DIR, "config", "device_dev.json")
+    Config.config_file = os.getenv("INKYPI_DEV_CONFIG") or os.path.join(Config.BASE_DIR, "config", "device_dev.json")
     DEV_MODE = True
     PORT = 8080
     logger.info("Starting InkyPi in DEVELOPMENT mode on port 8080")
