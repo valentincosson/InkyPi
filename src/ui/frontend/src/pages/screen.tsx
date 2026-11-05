@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react"
-import { Button } from "@/components/ui/button"
+import { Link } from "wouter"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { focusContent } from "@/components/route-focus"
 import { Shell } from "@/components/shell"
 import { getState, type UiState } from "@/api"
@@ -106,7 +107,7 @@ export function ScreenPage() {
       <div className={notice}>
         <h1 tabIndex={-1} className={heading}>{t("screen.emptyTitle")}</h1>
         <p className="mt-1 text-muted-foreground">{t("screen.emptyBody")}</p>
-        <Button className="mt-4 min-h-10" render={<a href="/" />}>{t("screen.choosePlugin")}</Button>
+        <Link href="/plugins" className={`${buttonVariants()} mt-4 min-h-10`}>{t("screen.choosePlugin")}</Link>
       </div>
     )
   } else {

@@ -2,6 +2,7 @@
 import ast
 import gzip
 import hashlib
+import json
 import os
 import re
 
@@ -214,3 +215,56 @@ class TestApiKeysData:
 
     def test_no_file_means_no_keys(self, ui_client):
         assert ui_client.get("/ui/api/api-keys").get_json() == {"keys": []}
+
+
+PLUGIN_PARAMS_SNAPSHOT = os.path.join(os.path.dirname(__file__), "snapshots", "plugin_params.json")
+
+
+class TestPluginData:
+    def test_lists_plugins_in_the_chosen_order(self, ui_client, device_config):
+        ui_client.post("/api/plugin_order", json={"order": ["clock", "weather"]})
+        plugins = ui_client.get("/ui/api/plugins").get_json()["plugins"]
+        assert plugins[:2] == [{"id": "clock", "name": "Clock"}, {"id": "weather", "name": "Weather"}]
+
+    def test_describes_a_new_form(self, ui_client):
+        body = ui_client.get("/ui/api/plugins/clock").get_json()
+        assert body["id"] == "clock"
+        assert body["name"] == "Clock"
+        assert body["instance"] is None
+        assert body["settings"] is None
+        assert "Default" in body["playlists"]
+        assert body["params"]["clock_faces"][0]["name"]
+        assert "settings_template" not in body["params"]
+
+    def test_describes_an_existing_instance(self, ui_client, device_config):
+        instance = device_config.get_playlist_manager().find_plugin("clock", "Living room")
+        instance.refresh = {"interval": 7200}
+        body = ui_client.get("/ui/api/plugins/clock?instance=Living room").get_json()
+        assert body["instance"] == "Living room"
+        assert body["settings"] == instance.settings
+        assert body["refresh"] == {"interval": 7200}
+
+    def test_unknown_plugin_or_instance(self, ui_client):
+        assert ui_client.get("/ui/api/plugins/nope").status_code == 404
+        assert ui_client.get("/ui/api/plugins/clock?instance=Nope").status_code == 404
+
+    def test_reports_key_names_without_values(self, ui_client, tmp_path):
+        (tmp_path / ".env").write_text("OPEN_AI_SECRET=super-secret\nEMPTY=\n")
+        response = ui_client.get("/ui/api/plugins/ai_text")
+        assert "super-secret" not in response.get_data(as_text=True)
+        assert response.get_json()["keys_set"] == ["OPEN_AI_SECRET"]
+
+    def test_every_plugin_can_describe_its_form(self, ui_client, device_config):
+        """Sert aussi de référence aux tests du moteur de formulaires, côté front."""
+        actual = {}
+        for plugin in device_config.get_plugins():
+            response = ui_client.get(f"/ui/api/plugins/{plugin['id']}")
+            assert response.status_code == 200, plugin["id"]
+            actual[plugin["id"]] = response.get_json()["params"]
+
+        if os.environ.get("UPDATE_PLUGIN_FORM_SNAPSHOTS"):
+            with open(PLUGIN_PARAMS_SNAPSHOT, "w") as snapshot:
+                json.dump(actual, snapshot, indent=2, ensure_ascii=False, sort_keys=True)
+                snapshot.write("\n")
+        with open(PLUGIN_PARAMS_SNAPSHOT) as snapshot:
+            assert actual == json.load(snapshot)

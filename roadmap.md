@@ -21,30 +21,24 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | 1. Design | Propositions construites sur shadcn, choix, review | Terminé |
 | 2. Socle | `src/ui/` servi sur `/ui/`, React, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi, attributions | Terminé |
 | 3. Réglages et clés d'API | Pages `/ui/settings` et `/ui/api-keys`, choix de la langue, enregistrement sûr des clés | Terminé |
-| 4. Formulaires de plugins | Moteur générique, portage du plus simple au plus complexe, repli sur l'ancienne page | À faire |
+| 4. Formulaires de plugins | Moteur générique, les 20 plugins portés sur `/ui/plugin/<id>`, catalogue provisoire sur `/ui/plugins`, repli sur l'ancienne page | Terminé |
 | 5. Accueil | État de l'écran, catalogue, tri | À faire |
 | 6. Playlists | Frise sur 24 h, priorité visible, réordonnancement, bugs corrigés | À faire |
 | 7. Aperçu sans envoi à l'écran | Génération seule d'une image | À faire |
 
 ## Défauts relevés par la capture des formulaires
 
-Les captures de `tests/snapshots/plugin_forms/` décrivent l'existant, défauts compris. Les formulaires du lot 4 ne doivent pas les reproduire :
+Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface, défauts compris. Ces défauts restent dans l'ancienne page et sont corrigés dans la nouvelle :
 
 - **Option désactivée sans le vouloir :** dans `rss`, `ai_image`, `image_album` et `image_upload`, une option activée se réaffiche cochée mais garde la valeur `false`. Réenregistrer sans y toucher la désactive.
 - **`weather` :** `graphIconStep` n'est pas restauré à la réouverture et revient à `2`.
 - **`newspaper` :** `locationSearch` n'est pas restauré à la réouverture.
 - **`image_album` :** `updateTitleOptions` est appelée mais n'est définie nulle part.
 
-La capture remplit seulement les champs présents à l'ouverture : les lignes ajoutées dynamiquement (`calendar`, `todo_list`) et les fichiers envoyés (`image_upload`) restent à couvrir au lot 4.
+`src/ui/frontend/src/forms/contract.test.ts` compare chaque description aux captures et à son `settings.html` : un champ ajouté par upstream fait échouer ce test, et un réglage inconnu de la description repart tel quel à l'enregistrement. Les lignes dynamiques et les fichiers sont couverts par `tests/test_ui_plugin_forms.py`.
 
 ## À reprendre de la review de la maquette
 
-- **Lot 4 (formulaires) :**
-  - valider la saisie, avec les erreurs en ligne ;
-  - alerter en cas de texte illisible sur son fond ;
-  - conserver le brouillon en cas de sortie du formulaire ;
-  - dessiner l'échec d'envoi ;
-  - choisir un service de géocodage pour la recherche de ville.
 - **Lot 5 (accueil) :** construire un vrai signal pour « Screen connected », ou le remplacer par un état plus modeste.
 - **Lot 7 (aperçu) :** brancher le bouton Update preview sur une vraie génération d'image.
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
@@ -54,7 +48,14 @@ La capture remplit seulement les champs présents à l'ouverture : les lignes aj
 - L'ancienne interface n'a aucun lien vers `/ui/` : y revenir passe par le bouton Retour du navigateur ou l'adresse. Le passage à `/` les supprimera.
 - Pendant un rendu, le serveur à un seul thread bloque aussi l'interface, fichiers statiques compris.
 - La langue choisie ne concerne que la nouvelle interface : l'ancienne reste en anglais.
-- La confirmation avant de quitter un formulaire ne couvre pas le bouton Retour du navigateur à l'intérieur de la nouvelle interface. Le lot 4 traite les brouillons.
+- La confirmation avant de quitter les réglages ne couvre pas le bouton Retour du navigateur à l'intérieur de la nouvelle interface. Les formulaires de plugins n'ont pas ce problème : ils gardent un brouillon, sauf pour les fichiers choisis.
+- L'ancienne page des playlists ouvre encore l'ancien formulaire d'un plugin ; le lot 6 la remplace.
+- Le catalogue `/ui/plugins` reste minimal jusqu'au lot 5.
+- Comme dans l'ancienne page, les unités de Weather sont en °F par défaut.
+- Une copie d'une entrée Image Upload partage ses fichiers avec l'original : supprimer l'une retire les images de l'autre, et deux images de même nom se remplacent. C'était déjà le cas dans l'ancienne page ; à revoir au lot 6, qui gère la suppression.
+- Enregistrer une entrée Image Upload fait repartir sa rotation de la première image, comme dans l'ancienne page.
+- Comme dans l'ancienne page, un réglage masqué n'est pas renvoyé : activer la date aléatoire d'APOD oublie la date saisie à l'enregistrement.
+- L'avertissement sur une clé d'API ne regarde que `.env`. Il peut s'afficher à tort si la clé vient de l'environnement du service ; il ne bloque jamais l'envoi.
 - Après un redémarrage demandé depuis les réglages, le message reste affiché : rien ne vérifie encore le retour de l'appareil.
 - Le fichier `.env` est réécrit en entier à chaque changement : ses commentaires sont perdus, comme avec l'ancienne page.
 - Une valeur de clé contenant `${NOM}` est interprétée par `python-dotenv` à la relecture.

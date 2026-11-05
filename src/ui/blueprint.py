@@ -10,6 +10,7 @@ import pytz
 from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
 
 from blueprints import apikeys
+from plugins.plugin_registry import get_plugin_instance
 
 BUNDLE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundle")
 ONE_YEAR = 31_536_000
@@ -94,6 +95,44 @@ def api_keys():
     """Liste les clés enregistrées, jamais leurs valeurs. L'enregistrement passe par /api-keys/save."""
     entries = apikeys.parse_env_file(apikeys.get_env_path())
     return jsonify({"keys": [{"key": key, "has_value": bool(value)} for key, value in entries]})
+
+
+@ui_bp.route("/api/plugins")
+def plugins():
+    """Liste les plugins installés, dans l'ordre choisi par l'utilisateur."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    return jsonify({"plugins": [{"id": plugin["id"], "name": plugin["display_name"]} for plugin in device_config.get_plugins()]})
+
+
+@ui_bp.route("/api/plugins/<plugin_id>")
+def plugin_form(plugin_id):
+    """Donne ce qu'un formulaire de plugin affiche. L'enregistrement passe par les routes existantes."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    plugin_config = device_config.get_plugin(plugin_id)
+    if not plugin_config:
+        return jsonify({"error": "Plugin not found"}), 404
+
+    playlist_manager = device_config.get_playlist_manager()
+    instance_name = request.args.get("instance")
+    instance = None
+    if instance_name:
+        instance = playlist_manager.find_plugin(plugin_id, instance_name)
+        if not instance:
+            return jsonify({"error": f"Plugin instance {instance_name} does not exist"}), 404
+
+    params = get_plugin_instance(plugin_config).generate_settings_template()
+    params.pop("settings_template", None)
+    env_entries = apikeys.parse_env_file(apikeys.get_env_path())
+    return jsonify({
+        "id": plugin_id,
+        "name": plugin_config["display_name"],
+        "params": params,
+        "instance": instance_name if instance else None,
+        "settings": instance.settings if instance else None,
+        "refresh": instance.refresh if instance else None,
+        "playlists": playlist_manager.get_playlist_names(),
+        "keys_set": [key for key, value in env_entries if value],
+    })
 
 
 @ui_bp.route("/api/<path:_unknown>")

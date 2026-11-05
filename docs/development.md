@@ -177,3 +177,11 @@ npm run build  # required before committing: a test fails if the bundle no longe
 ```
 
 Do not name a folder `lib`, `dist` or `build` in there: the root `.gitignore` would silently ignore it.
+
+### Plugin forms
+
+Each plugin form is described in `src/ui/frontend/src/forms/definitions.ts` and rendered by a shared engine. A plugin without a description keeps its old page. After changing what a plugin's `settings.html` or `generate_settings_template` offers, update its description; `npm test` compares every description with `settings.html` and with the references in `tests/snapshots/`. To refresh those references:
+
+```bash
+UPDATE_PLUGIN_FORM_SNAPSHOTS=1 pytest tests/test_plugin_forms.py tests/test_ui.py
+```

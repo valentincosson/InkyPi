@@ -66,3 +66,48 @@ export const getApiKeys = (signal?: AbortSignal) => request<{ keys: ApiKey[] }>(
 
 export const saveApiKeys = (entries: ApiKeyEntry[]) =>
   request<unknown>("/api-keys/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entries }) })
+
+export type PluginSummary = { id: string; name: string }
+export const getPlugins = (signal?: AbortSignal) => request<{ plugins: PluginSummary[] }>("/ui/api/plugins", { signal })
+
+export type PluginData = {
+  id: string
+  name: string
+  params: Record<string, unknown>
+  instance: string | null
+  settings: Record<string, unknown> | null
+  refresh: { interval?: number; scheduled?: string } | null
+  playlists: string[]
+  keys_set: string[]
+}
+
+export function getPlugin(id: string, instance: string | null, signal?: AbortSignal) {
+  const query = instance ? `?instance=${encodeURIComponent(instance)}` : ""
+  return request<PluginData>(`/ui/api/plugins/${encodeURIComponent(id)}${query}`, { signal })
+}
+
+function formBody(pluginId: string, entries: [string, string | File][]) {
+  const body = new FormData()
+  entries.forEach(([name, value]) => body.append(name, value))
+  body.append("plugin_id", pluginId)
+  return body
+}
+
+/** Répond une fois l'image envoyée à l'écran : cela peut prendre longtemps sur le Pi. */
+export const showOnScreen = (pluginId: string, entries: [string, string | File][]) =>
+  request<unknown>("/update_now", { method: "POST", body: formBody(pluginId, entries) })
+
+export function addToPlaylist(pluginId: string, entries: [string, string | File][], refresh: Record<string, string>) {
+  const body = formBody(pluginId, entries)
+  body.append("refresh_settings", JSON.stringify(refresh))
+  return request<unknown>("/add_plugin", { method: "POST", body })
+}
+
+export const saveInstance = (pluginId: string, instance: string, entries: [string, string | File][]) =>
+  request<unknown>(`/update_plugin_instance/${encodeURIComponent(instance)}`, { method: "PUT", body: formBody(pluginId, entries) })
+
+export function saveRefresh(pluginId: string, instance: string, refresh: Record<string, string>) {
+  const body = formBody(pluginId, [])
+  body.append("refresh_settings", JSON.stringify(refresh))
+  return request<unknown>(`/update_plugin_instance/${encodeURIComponent(instance)}`, { method: "PUT", body })
+}

@@ -12,7 +12,7 @@ const LICENSE = "https://www.gnu.org/licenses/gpl-3.0.html"
 // Les pages pas encore portées ouvrent l'ancienne interface, à leur adresse habituelle.
 const nav: { label: Key; href: string; icon: LucideIcon; ported?: boolean }[] = [
   { label: "nav.screen", href: "/", icon: MonitorIcon, ported: true },
-  { label: "nav.plugins", href: "/", icon: PuzzleIcon },
+  { label: "nav.plugins", href: "/plugins", icon: PuzzleIcon, ported: true },
   { label: "nav.playlists", href: "/playlist", icon: LayersIcon },
   { label: "nav.settings", href: "/settings", icon: SettingsIcon, ported: true },
   { label: "nav.apiKeys", href: "/api-keys", icon: KeyRoundIcon, ported: true },

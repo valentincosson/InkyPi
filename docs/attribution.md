@@ -92,3 +92,11 @@ The interface in `src/ui/` ships the components below and their dependencies. Th
 | [Lucide](https://lucide.dev) icons | ISC |
 | [wouter](https://github.com/molefrog/wouter) | Unlicense |
 | [Geist](https://vercel.com/font) font, packaged by [Fontsource](https://fontsource.org) | SIL OFL v1.1 |
+| [Leaflet](https://leafletjs.com), loaded only when the map opens | BSD-2-Clause |
+
+The Weather form also uses two online services, called from the browser and not from the device:
+
+- City search: [Open-Meteo](https://open-meteo.com/) geocoding, based on [GeoNames](https://www.geonames.org/) data (CC BY 4.0). Its free API is for non-commercial use.
+- Map: tiles by [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL), shown only while the map is open.
+
+Both sources are credited in the form itself.

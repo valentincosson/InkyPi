@@ -11,6 +11,8 @@ import { ScreenPage } from "@/pages/screen"
 
 // Chargées à la demande : l'écran principal reste léger.
 const SettingsPage = lazy(() => import("@/pages/settings").then(({ SettingsPage }) => ({ default: SettingsPage })))
+const PluginsPage = lazy(() => import("@/pages/plugins").then(({ PluginsPage }) => ({ default: PluginsPage })))
+const PluginPage = lazy(() => import("@/pages/plugin").then(({ PluginPage }) => ({ default: PluginPage })))
 const ApiKeysPage = lazy(() => import("@/pages/api-keys").then(({ ApiKeysPage }) => ({ default: ApiKeysPage })))
 
 createRoot(document.getElementById("root")!).render(
@@ -22,6 +24,8 @@ createRoot(document.getElementById("root")!).render(
           <Suspense fallback={<div className="p-5"><Loading /></div>}>
             <Switch>
               <Route path="/" component={ScreenPage} />
+              <Route path="/plugins" component={PluginsPage} />
+              <Route path="/plugin/:id" component={PluginPage} />
               <Route path="/settings" component={SettingsPage} />
               <Route path="/api-keys" component={ApiKeysPage} />
               <Route component={NotFoundPage} />

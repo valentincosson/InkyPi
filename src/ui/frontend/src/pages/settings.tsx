@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react"
 import { getSettings, requestPower, saveSettings, type DeviceSettings } from "@/api"
+import { Choice } from "@/components/choice"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { LoadFailed, Loading, PageTitle } from "@/components/page-state"
 import { Shell } from "@/components/shell"
@@ -9,7 +10,6 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { Field, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { useI18n } from "@/i18n"
@@ -32,17 +32,6 @@ function Section({ id, title, description, children }: { id: string; title: stri
       </div>
       <div className="grid max-w-[640px] content-start gap-5 lg:col-span-3">{children}</div>
     </section>
-  )
-}
-
-function Choice<T extends string>({ id, label, value, options, onChange }: { id: string; label?: string; value: T; options: { value: T; label: string }[]; onChange: (value: T) => void }) {
-  return (
-    <Select items={options} value={value} onValueChange={(next) => onChange(next as T)}>
-      <SelectTrigger id={id} aria-label={label} className="min-h-10 w-full bg-card"><SelectValue /></SelectTrigger>
-      <SelectContent>
-        {options.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}
-      </SelectContent>
-    </Select>
   )
 }
 
