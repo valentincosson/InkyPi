@@ -84,6 +84,35 @@ export const refreshInstance = (playlist: string, pluginId: string, instance: st
     body: JSON.stringify({ playlist_name: playlist, plugin_id: pluginId, plugin_instance: instance }),
   })
 
+export type RefreshRule = { interval?: number; scheduled?: string }
+export type PlaylistEntry = { plugin_id: string; plugin_name: string; instance: string; installed: boolean; refresh: RefreshRule; refreshed_at: string | null; image_url: string | null }
+export type PlaylistSummary = { name: string; start_time: string; end_time: string; entries: PlaylistEntry[] }
+export type PlaylistsData = {
+  device: { timezone: string; time_format: "12h" | "24h" }
+  running: boolean
+  on_screen: { plugin_id: string; instance: string } | null
+  day: { start: string; end: string; playlist: string | null }[]
+  playlists: PlaylistSummary[]
+}
+
+export const getPlaylists = (signal?: AbortSignal) => request<PlaylistsData>("/ui/api/playlists", { signal })
+
+const json = (method: string, body: unknown): RequestInit => ({ method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+
+export const createPlaylist = (name: string, start: string, end: string) =>
+  request<unknown>("/create_playlist", json("POST", { playlist_name: name, start_time: start, end_time: end }))
+
+export const updatePlaylist = (name: string, newName: string, start: string, end: string) =>
+  request<unknown>(`/update_playlist/${encodeURIComponent(name)}`, json("PUT", { new_name: newName, start_time: start, end_time: end }))
+
+export const deletePlaylist = (name: string) => request<unknown>(`/delete_playlist/${encodeURIComponent(name)}`, { method: "DELETE" })
+
+export const deleteEntry = (playlist: string, pluginId: string, instance: string) =>
+  request<unknown>("/delete_plugin_instance", json("POST", { playlist_name: playlist, plugin_id: pluginId, plugin_instance: instance }))
+
+export const savePlaylistOrder = (playlist: string, entries: { plugin_id: string; instance: string }[]) =>
+  request<unknown>("/ui/api/playlist-order", json("POST", { playlist, entries }))
+
 export const savePluginOrder = (order: string[]) =>
   request<unknown>("/api/plugin_order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ order }) })
 

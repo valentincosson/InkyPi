@@ -54,9 +54,19 @@ def _now(device_config):
         return datetime.now(pytz.UTC)
 
 
+def _active_at(playlist_manager, moment):
+    """La playlist que le moteur choisirait à ce moment, avec le même calcul que lui."""
+    try:
+        return playlist_manager.determine_active_playlist(moment)
+    except ValueError as error:
+        # L'ancienne page laisse commencer une playlist à 24:00, ce que le calcul de priorité refuse : le moteur
+        # n'affiche alors rien. Les pages restent ouvertes pour pouvoir corriger cet horaire.
+        logger.warning("A playlist has a time the engine can't use: %s", error)
+        return None
+
+
 def _active_playlist(device_config):
-    """La playlist que le moteur choisirait maintenant, avec le même calcul que lui."""
-    return device_config.get_playlist_manager().determine_active_playlist(_now(device_config))
+    return _active_at(device_config.get_playlist_manager(), _now(device_config))
 
 
 def _watching_since(playlist, now):
@@ -79,6 +89,10 @@ def _can_refresh(device_config):
     return bool(instance and device_config.get_plugin(info.plugin_id))
 
 
+def _instance_image_url(playlist, instance):
+    return "/plugin_instance_image/" + "/".join(quote(part, safe="") for part in (playlist.name, instance.plugin_id, instance.name))
+
+
 def _rotation(device_config):
     """Décrit la suite de la rotation sans la faire avancer."""
     playlist = _active_playlist(device_config)
@@ -97,7 +111,7 @@ def _rotation(device_config):
             {
                 "plugin_id": instance.plugin_id,
                 "instance": instance.name,
-                "image_url": "/plugin_instance_image/" + "/".join(quote(part, safe="") for part in (playlist.name, instance.plugin_id, instance.name)),
+                "image_url": _instance_image_url(playlist, instance),
             }
             for instance in upcoming
         ],
@@ -150,6 +164,98 @@ def show_next():
     except Exception as error:
         playlist.current_plugin_index = previous_index
         logger.exception("Could not show the next plugin")
+        return jsonify({"error": str(error)}), 500
+    return jsonify({"success": True})
+
+
+def _day_plan(playlist_manager):
+    """Ce que le moteur affiche à chaque moment de la journée. Rien ne change entre le début et la fin de deux playlists."""
+    edges = {"00:00"}
+    for playlist in playlist_manager.playlists:
+        edges.update((playlist.start_time, playlist.end_time))
+    edges.discard("24:00")
+    ordered = sorted(edges)
+
+    plan = []
+    for start, end in zip(ordered, [*ordered[1:], "24:00"]):
+        active = _active_at(playlist_manager, datetime.strptime(start, "%H:%M"))
+        name = active.name if active else None
+        if plan and plan[-1]["playlist"] == name:
+            plan[-1]["end"] = end
+        else:
+            plan.append({"start": start, "end": end, "playlist": name})
+    return plan
+
+
+def _describe_entry(device_config, playlist, instance):
+    plugin = device_config.get_plugin(instance.plugin_id)
+    version = instance.latest_refresh_time
+    return {
+        "plugin_id": instance.plugin_id,
+        "plugin_name": plugin["display_name"] if plugin else instance.plugin_id,
+        "instance": instance.name,
+        "installed": bool(plugin),
+        "refresh": instance.refresh,
+        "refreshed_at": version,
+        # Une entrée qui n'a jamais tourné n'a pas d'image : inutile de la demander au Pi.
+        "image_url": f"{_instance_image_url(playlist, instance)}?v={quote(version, safe='')}" if version else None,
+    }
+
+
+@ui_bp.route("/api/playlists")
+def playlists():
+    """Décrit les playlists et leur journée. Les changements passent par les routes existantes, sauf l'ordre."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    manager = device_config.get_playlist_manager()
+    info = device_config.get_refresh_info()
+    return jsonify({
+        "device": {
+            "timezone": device_config.get_config("timezone", default="UTC"),
+            "time_format": device_config.get_config("time_format", default="12h"),
+        },
+        "running": bool(current_app.config["REFRESH_TASK"].running),
+        # Un nom d'entrée est unique pour un plugin : le repère survit au renommage d'une playlist.
+        "on_screen": {"plugin_id": info.plugin_id, "instance": info.plugin_instance} if info.plugin_instance else None,
+        "day": _day_plan(manager),
+        "playlists": [
+            {
+                "name": playlist.name,
+                "start_time": playlist.start_time,
+                "end_time": playlist.end_time,
+                "entries": [_describe_entry(device_config, playlist, instance) for instance in playlist.plugins],
+            }
+            for playlist in manager.playlists
+        ],
+    })
+
+
+@ui_bp.route("/api/playlist-order", methods=["POST"])
+def playlist_order():
+    """Change l'ordre des entrées d'une playlist, sans déplacer la rotation de l'entrée où elle se trouve."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    data = request.get_json(silent=True)
+    entries = data.get("entries") if isinstance(data, dict) else None
+    if not isinstance(entries, list) or not all(isinstance(entry, dict) for entry in entries):
+        return jsonify({"error": "The new order is missing."}), 400
+    playlist = device_config.get_playlist_manager().get_playlist(data.get("playlist"))
+    if not playlist:
+        return jsonify({"error": "This playlist no longer exists."}), 404
+
+    wanted = [(entry.get("plugin_id"), entry.get("instance")) for entry in entries]
+    existing = [(instance.plugin_id, instance.name) for instance in playlist.plugins]
+    if len(set(existing)) != len(existing) or len(wanted) != len(existing) or not all(key in wanted for key in existing):
+        return jsonify({"error": "This playlist has changed. Reload the page and try again."}), 409
+
+    previous_plugins, previous_index = playlist.plugins, playlist.current_plugin_index
+    current = previous_plugins[previous_index] if previous_index is not None and previous_index < len(previous_plugins) else None
+    playlist.plugins = [previous_plugins[existing.index(key)] for key in wanted]
+    if current:
+        playlist.current_plugin_index = playlist.plugins.index(current)
+    try:
+        device_config.write_config()
+    except Exception as error:
+        playlist.plugins, playlist.current_plugin_index = previous_plugins, previous_index
+        logger.exception("Could not save the playlist order")
         return jsonify({"error": str(error)}), 500
     return jsonify({"success": True})
 

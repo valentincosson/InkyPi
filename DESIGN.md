@@ -39,6 +39,7 @@ Geist seule, hébergée localement. Corps en 15 px, contrôles en 14 px, titre d
 - Accueil : l'écran sur trois colonnes, l'état et les actions sur la quatrième, puis ce qui suit. Rien n'affirme que l'écran est branché : aucun signal matériel ne le permet.
 - Formulaire : 520 px de réglages à gauche, aperçu et actions fixes à droite. Jusqu'au lot 7, la colonne de droite montre l'image actuelle de l'écran.
 - Mobile : aperçu en haut et barre d'actions fixe en bas.
+- Playlists : la frise de la journée d'abord, une ligne par playlist avec son nom dans la première colonne, puis chaque playlist et ses entrées. Le trait plein indique ce qui passe à l'écran, la trame ce qu'une autre playlist prend, le contour une playlist vide qui bloque l'écran.
 - Réglages : titre de section dans la première colonne, champs sur 640 px au maximum dans les suivantes. La barre d'enregistrement ne reste fixe que s'il y a quelque chose à dire ou à enregistrer.
 
 ## Illustrations

@@ -13,6 +13,7 @@ import { ScreenPage } from "@/pages/screen"
 const SettingsPage = lazy(() => import("@/pages/settings").then(({ SettingsPage }) => ({ default: SettingsPage })))
 const PluginsPage = lazy(() => import("@/pages/plugins").then(({ PluginsPage }) => ({ default: PluginsPage })))
 const PluginPage = lazy(() => import("@/pages/plugin").then(({ PluginPage }) => ({ default: PluginPage })))
+const PlaylistsPage = lazy(() => import("@/pages/playlists").then(({ PlaylistsPage }) => ({ default: PlaylistsPage })))
 const ApiKeysPage = lazy(() => import("@/pages/api-keys").then(({ ApiKeysPage }) => ({ default: ApiKeysPage })))
 
 createRoot(document.getElementById("root")!).render(
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/" component={ScreenPage} />
               <Route path="/plugins" component={PluginsPage} />
               <Route path="/plugin/:id" component={PluginPage} />
+              <Route path="/playlists" component={PlaylistsPage} />
               <Route path="/settings" component={SettingsPage} />
               <Route path="/api-keys" component={ApiKeysPage} />
               <Route component={NotFoundPage} />

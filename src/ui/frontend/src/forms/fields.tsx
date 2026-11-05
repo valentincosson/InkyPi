@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react"
 import { ChevronDownIcon, PlusIcon, Trash2Icon, UploadIcon } from "lucide-react"
 import { Choice } from "@/components/choice"
-import { Segmented } from "@/components/segmented"
+import { LabelledSegmented } from "@/components/segmented"
 import { Button } from "@/components/ui/button"
 import { Field as FieldBox, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -56,15 +56,6 @@ function Labelled({ id, label, help, error, children }: { id: string; label: str
       {help ? <FieldDescription>{help}</FieldDescription> : null}
       <ErrorText id={id} error={error} />
     </FieldBox>
-  )
-}
-
-export function LabelledSegmented({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
-  return (
-    <div className="grid gap-2">
-      <span className={groupLabel}>{label}</span>
-      <Segmented label={label} value={value} options={options} onChange={onChange} />
-    </div>
   )
 }
 

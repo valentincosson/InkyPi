@@ -9,13 +9,12 @@ const UPSTREAM = "https://github.com/fatihak/InkyPi"
 const SOURCE = "https://github.com/valentincosson/InkyPi"
 const LICENSE = "https://www.gnu.org/licenses/gpl-3.0.html"
 
-// Les pages pas encore portées ouvrent l'ancienne interface, à leur adresse habituelle.
-const nav: { label: Key; href: string; icon: LucideIcon; ported?: boolean }[] = [
-  { label: "nav.screen", href: "/", icon: MonitorIcon, ported: true },
-  { label: "nav.plugins", href: "/plugins", icon: PuzzleIcon, ported: true },
-  { label: "nav.playlists", href: "/playlist", icon: LayersIcon },
-  { label: "nav.settings", href: "/settings", icon: SettingsIcon, ported: true },
-  { label: "nav.apiKeys", href: "/api-keys", icon: KeyRoundIcon, ported: true },
+const nav: { label: Key; href: string; icon: LucideIcon }[] = [
+  { label: "nav.screen", href: "/", icon: MonitorIcon },
+  { label: "nav.plugins", href: "/plugins", icon: PuzzleIcon },
+  { label: "nav.playlists", href: "/playlists", icon: LayersIcon },
+  { label: "nav.settings", href: "/settings", icon: SettingsIcon },
+  { label: "nav.apiKeys", href: "/api-keys", icon: KeyRoundIcon },
 ]
 
 const width = "mx-auto w-full max-w-[calc(1132px+2.5rem)] px-5"
@@ -60,12 +59,9 @@ export function Shell({ title, current, children }: { title: string; current?: K
         <div className={`${width} flex flex-wrap items-center justify-between gap-x-6 py-2 lg:flex-nowrap`}>
           <Link href="/" className="py-1.5 text-lg font-semibold tracking-tight lg:mr-2">InkyPi</Link>
           <nav className="order-3 -mx-1 mt-1 flex w-[calc(100%+0.5rem)] gap-0.5 overflow-x-auto p-1 lg:order-none lg:m-0 lg:w-auto lg:flex-1 lg:overflow-visible lg:p-0" aria-label={t("nav.main")}>
-            {nav.map(({ label, href, icon: Icon, ported }) => {
-              const content = <><Icon className="hidden size-4 sm:block" aria-hidden="true" />{t(label)}</>
-              return ported
-                ? <Link key={label} href={href} onFocus={reveal} aria-current={label === current ? "page" : undefined} className={linkClass(label === current)}>{content}</Link>
-                : <a key={label} href={href} onFocus={reveal} className={linkClass(false)}>{content}</a>
-            })}
+            {nav.map(({ label, href, icon: Icon }) => (
+              <Link key={label} href={href} onFocus={reveal} aria-current={label === current ? "page" : undefined} className={linkClass(label === current)}><Icon className="hidden size-4 sm:block" aria-hidden="true" />{t(label)}</Link>
+            ))}
           </nav>
           <div className="-mr-2 lg:order-none"><ThemeToggle /></div>
         </div>

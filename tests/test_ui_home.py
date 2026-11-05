@@ -130,7 +130,7 @@ class TestUpNext:
         refreshed(device_config)
         page.goto(f"{server_url}/ui/")
         expect(page.get_by_text("Nothing in Default yet.")).to_be_visible()
-        expect(page.get_by_role("link", name="Open playlists")).to_have_attribute("href", "/playlist")
+        expect(page.get_by_role("link", name="Open playlists")).to_have_attribute("href", "/ui/playlists")
         expect(page.get_by_role("button", name="Show next")).to_be_hidden()
 
     def test_no_active_playlist_is_said_plainly(self, page, server_url, device_config):

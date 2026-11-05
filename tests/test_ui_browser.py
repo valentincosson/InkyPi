@@ -139,12 +139,6 @@ class TestInBrowser:
         page.reload()
         assert page.evaluate("document.documentElement.className") == "dark"
 
-    def test_pages_not_ported_open_the_old_interface(self, page, server_url):
-        page.goto(f"{server_url}/ui/")
-        page.get_by_role("link", name="Playlists").click()
-        page.wait_for_url("**/playlist")
-        assert "/ui/" not in page.url
-
     def test_unknown_page_offers_a_way_back(self, page, server_url):
         page.goto(f"{server_url}/ui/nope")
         playwright_api.expect(page.get_by_role("heading", level=1)).to_have_text("Page not found")
@@ -353,13 +347,13 @@ class TestSettingsPage:
         dialog.get_by_role("button", name="Leave").click()
         settings_page.wait_for_url("**/ui/")
 
-    def test_leaving_for_the_old_interface_asks_only_once(self, settings_page):
+    def test_leaving_the_application_asks_only_once(self, settings_page):
         dialogs = []
         settings_page.on("dialog", lambda dialog: (dialogs.append(dialog.type), dialog.accept()))
         settings_page.get_by_label("Name", exact=True).fill("Typed")
-        settings_page.get_by_role("link", name="Playlists").click()
+        settings_page.get_by_role("link", name="Third-party licences").click()
         settings_page.get_by_role("alertdialog").get_by_role("button", name="Leave").click()
-        settings_page.wait_for_url("**/playlist")
+        settings_page.wait_for_url("**/THIRD_PARTY_LICENSES.txt")
         assert dialogs == []
 
     def test_saved_changes_do_not_block_leaving(self, settings_page):

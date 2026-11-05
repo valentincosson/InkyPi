@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { focusContent } from "@/components/route-focus"
 
 /** Charge une donnée à l'ouverture de la page. `load` doit rester la même fonction d'un rendu à l'autre. */
@@ -26,5 +26,15 @@ export function useResource<T>(load: (signal: AbortSignal) => Promise<T>) {
     setAttempt((n) => n + 1)
   }
 
-  return { data, failed, retry }
+  /** Relit la donnée sans toucher au focus ni à ce qui est affiché : un échec se voit dans `failed`. */
+  const reload = useCallback(async () => {
+    try {
+      setData(await load(new AbortController().signal))
+      setFailed(false)
+    } catch {
+      setFailed(true)
+    }
+  }, [load])
+
+  return { data, failed, retry, reload }
 }

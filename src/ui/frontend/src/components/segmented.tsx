@@ -15,3 +15,12 @@ export function Segmented({ label, value, options, onChange }: { label: string; 
     </div>
   )
 }
+
+export function LabelledSegmented({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
+  return (
+    <div className="grid gap-2">
+      <span className="text-sm leading-snug font-medium">{label}</span>
+      <Segmented label={label} value={value} options={options} onChange={onChange} />
+    </div>
+  )
+}

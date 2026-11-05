@@ -1,21 +1,22 @@
-import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { ArrowLeftIcon, CheckIcon, LoaderCircleIcon } from "lucide-react"
 import { Link, useParams, useSearch } from "wouter"
-import { addToPlaylist, ApiError, getPlugin, saveInstance, saveRefresh, showOnScreen, type PluginData } from "@/api"
+import { addToPlaylist, ApiError, getPlugin, saveInstance, showOnScreen, type PluginData } from "@/api"
 import { knownKeys } from "@/api-keys"
+import { ActionDialog } from "@/components/action-dialog"
 import { Choice } from "@/components/choice"
 import { LoadFailed, Loading } from "@/components/page-state"
 import { Shell } from "@/components/shell"
 import { UnsavedGuard } from "@/components/unsaved-guard"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Field, FieldError, FieldLabel } from "@/components/ui/field"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { definitions } from "@/forms/definitions"
 import { pluginLabel } from "@/forms/registry"
 import { fromDraft, initialValues, isVisible, sectionsOf, toDraft, toEntries, validate } from "@/forms/engine"
-import { FieldList, FormProvider, LabelledSegmented } from "@/forms/fields"
-import { instanceNameError, refreshError, refreshFromStored, suggestedName, toRefreshSettings, type RefreshUnit, type RefreshValues } from "@/forms/refresh"
+import { FieldList, FormProvider } from "@/forms/fields"
+import { instanceNameError, refreshError, refreshFromStored, suggestedName, toRefreshSettings, type RefreshValues } from "@/forms/refresh"
+import { RefreshFields, ScheduleDialog } from "@/forms/schedule-dialog"
 import type { Definition, FileValue, FormValues, Value } from "@/forms/types"
 import { useI18n } from "@/i18n"
 import type { Key } from "@/i18n/translate"
@@ -39,64 +40,6 @@ function ScreenImage({ version }: { version: number }) {
       </div>
       <figcaption className="mt-2 text-sm text-muted-foreground">{t("screen.onScreen")}</figcaption>
     </figure>
-  )
-}
-
-function RefreshFields({ prefix, values, onChange }: { prefix: string; values: RefreshValues; onChange: (values: RefreshValues) => void }) {
-  const { t } = useI18n()
-  const one = values.interval.trim() === "1"
-  return (
-    <div className="grid gap-3">
-      <LabelledSegmented label={t("form.refreshLabel")} value={values.type} onChange={(type) => onChange({ ...values, type: type as RefreshValues["type"] })} options={[{ value: "interval", label: t("form.refreshEvery") }, { value: "scheduled", label: t("form.refreshDaily") }]} />
-      {values.type === "interval" ? (
-        <div className="grid grid-cols-[6rem_minmax(0,1fr)] gap-2">
-          <Input id={`${prefix}-interval`} aria-label={t("form.refreshEvery")} className="min-h-10 tabular-nums" inputMode="numeric" autoComplete="off" value={values.interval} onChange={(event) => onChange({ ...values, interval: event.target.value })} />
-          <Choice<RefreshUnit> id={`${prefix}-unit`} label={t("settings.unit")} value={values.unit} onChange={(unit) => onChange({ ...values, unit })} options={[
-            { value: "minute", label: t(one ? "settings.minute" : "settings.minutes") },
-            { value: "hour", label: t(one ? "settings.hour" : "settings.hours") },
-            { value: "day", label: t(one ? "form.day" : "form.days") },
-          ]} />
-        </div>
-      ) : (
-        <Input id={`${prefix}-time`} type="time" step={900} aria-label={t("form.refreshDaily")} className="min-h-10 w-fit" value={values.time} onChange={(event) => onChange({ ...values, time: event.target.value })} />
-      )}
-    </div>
-  )
-}
-
-/** Fenêtre d'envoi : l'erreur du serveur s'y affiche, et ce qui est saisi reste en place. */
-function ActionDialog({ title, description, confirm, opener, firstField, onClose, onSubmit, children }: { title: string; description: string; confirm: string; opener: string; firstField?: string; onClose: () => void; onSubmit: () => Promise<Key | string | null>; children: ReactNode }) {
-  const { t } = useI18n()
-  const [error, setError] = useState("")
-  const [busy, setBusy] = useState(false)
-  const submit = async (event: FormEvent) => {
-    event.preventDefault()
-    if (busy) return
-    setBusy(true)
-    setError("")
-    const failure = await onSubmit()
-    if (failure) {
-      setError(failure)
-      setBusy(false)
-    }
-  }
-  return (
-    <Dialog open onOpenChange={(open) => { if (!open && !busy) onClose() }}>
-      <DialogContent className="w-[calc(100vw-2rem)]" initialFocus={firstField ? () => document.getElementById(firstField) : undefined} finalFocus={() => document.getElementById(opener)}>
-        <form onSubmit={submit} noValidate className="grid gap-4">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {children}
-          {error ? <FieldError>{error}</FieldError> : null}
-          <DialogFooter>
-            <Button type="button" variant="outline" className="min-h-10" disabled={busy} onClick={onClose}>{t("action.cancel")}</Button>
-            <Button type="submit" className="min-h-10" aria-busy={busy}>{confirm}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   )
 }
 
@@ -129,33 +72,6 @@ function PlaylistDialog({ plugin, title, description, confirm, opener, entries, 
       <Field><FieldLabel htmlFor="instance-name">{t("form.instanceName")}</FieldLabel><Input id="instance-name" className="min-h-10" autoComplete="off" value={name} onChange={(event) => setName(event.target.value)} /></Field>
       <Field><FieldLabel htmlFor="playlist">{t("form.playlist")}</FieldLabel><Choice id="playlist" value={playlist} onChange={setPlaylist} options={plugin.playlists.map((item) => ({ value: item, label: item }))} /></Field>
       <RefreshFields prefix="add" values={refresh} onChange={setRefresh} />
-    </ActionDialog>
-  )
-}
-
-function ScheduleDialog({ plugin, instance, current, onClose, onDone }: { plugin: PluginData; instance: string; current: RefreshValues; onClose: () => void; onDone: (values: RefreshValues) => void }) {
-  const { t } = useI18n()
-  const [refresh, setRefresh] = useState(current)
-  return (
-    <ActionDialog
-      title={t("form.schedule")}
-      description={t("form.scheduleHelp")}
-      confirm={t("action.save")}
-      opener="action-schedule"
-      onClose={onClose}
-      onSubmit={async () => {
-        const invalid = refreshError(refresh)
-        if (invalid) return t(invalid)
-        try {
-          await saveRefresh(plugin.id, instance, toRefreshSettings(refresh))
-          onDone(refresh)
-          return null
-        } catch (error) {
-          return failureText(error, t, "error.refused")
-        }
-      }}
-    >
-      <RefreshFields prefix="edit" values={refresh} onChange={setRefresh} />
     </ActionDialog>
   )
 }
@@ -362,9 +278,10 @@ function PluginForm({ plugin, definition }: { plugin: PluginData; definition: De
       ) : null}
       {dialog === "schedule" && instance ? (
         <ScheduleDialog
-          plugin={plugin}
+          pluginId={plugin.id}
           instance={instance}
           current={refresh}
+          opener="action-schedule"
           onClose={() => setDialog(null)}
           onDone={(next) => {
             setRefresh(next)

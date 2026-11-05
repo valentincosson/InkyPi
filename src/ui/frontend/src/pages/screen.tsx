@@ -4,7 +4,8 @@ import { Link } from "wouter"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { focusContent } from "@/components/route-focus"
 import { Shell } from "@/components/shell"
-import { EmptyScreenArt, PluginArt } from "@/components/plugin-art"
+import { InstanceImage } from "@/components/instance-image"
+import { EmptyScreenArt } from "@/components/plugin-art"
 import { ApiError, getState, refreshInstance, showNext, type UiState } from "@/api"
 import { pluginLabel } from "@/forms/registry"
 import { nextChange } from "@/rotation"
@@ -66,7 +67,7 @@ function UpNext({ state }: { state: UiState }) {
         </ol>
       ) : (
         <p className="mt-3 text-muted-foreground">
-          {rotation.playlist ? t("screen.playlistEmpty", { name: rotation.playlist }) : t("screen.noPlaylist")} <a href="/playlist" className="underline underline-offset-4 hover:text-foreground">{t("screen.openPlaylists")}</a>
+          {rotation.playlist ? t("screen.playlistEmpty", { name: rotation.playlist }) : t("screen.noPlaylist")} <Link href="/playlists" className="underline underline-offset-4 hover:text-foreground">{t("screen.openPlaylists")}</Link>
         </p>
       )}
     </section>
@@ -74,13 +75,11 @@ function UpNext({ state }: { state: UiState }) {
 }
 
 function UpcomingItem({ item }: { item: UiState["rotation"]["upcoming"][number] }) {
-  const [failed, setFailed] = useState(false)
   return (
     <li>
       <Link href={`/plugin/${encodeURIComponent(item.plugin_id)}?instance=${encodeURIComponent(item.instance)}`} className="group block">
         <span className="block overflow-hidden rounded-[var(--radius)] shadow-[0_0_0_1px_var(--border)] transition-shadow group-hover:shadow-[0_0_0_1px_var(--input)]">
-          {/* Une entrée qui n'a encore jamais tourné n'a pas d'image. */}
-          {failed ? <PluginArt id={item.plugin_id} /> : <img src={item.image_url} alt="" loading="lazy" onError={() => setFailed(true)} className="block aspect-[5/3] w-full bg-white object-contain" />}
+          <InstanceImage url={item.image_url} pluginId={item.plugin_id} />
         </span>
         <span className="mt-2 block text-sm font-medium [overflow-wrap:anywhere]">{item.instance}</span>
       </Link>

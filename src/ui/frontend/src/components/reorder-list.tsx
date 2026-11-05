@@ -57,8 +57,8 @@ export function ReorderList<T extends Item>({ items, render, onChange }: { items
             >
               <GripVerticalIcon className="size-4 shrink-0 cursor-grab text-muted-foreground" aria-hidden="true" />
               <div className="min-w-0 flex-1">{render(item)}</div>
-              <Button id={up} type="button" variant="ghost" size="icon" className="size-10 shrink-0" aria-label={t("reorder.up", { name: item.label })} aria-disabled={index === 0} onClick={() => move(index, index - 1, up)}><ArrowUpIcon aria-hidden="true" /></Button>
-              <Button id={down} type="button" variant="ghost" size="icon" className="size-10 shrink-0" aria-label={t("reorder.down", { name: item.label })} aria-disabled={index === items.length - 1} onClick={() => move(index, index + 1, down)}><ArrowDownIcon aria-hidden="true" /></Button>
+              <Button id={up} type="button" variant="ghost" size="icon" className="size-10 shrink-0 aria-disabled:!border-transparent aria-disabled:!bg-transparent aria-disabled:opacity-40" aria-label={t("reorder.up", { name: item.label })} aria-disabled={index === 0} onClick={() => move(index, index - 1, up)}><ArrowUpIcon aria-hidden="true" /></Button>
+              <Button id={down} type="button" variant="ghost" size="icon" className="size-10 shrink-0 aria-disabled:!border-transparent aria-disabled:!bg-transparent aria-disabled:opacity-40" aria-label={t("reorder.down", { name: item.label })} aria-disabled={index === items.length - 1} onClick={() => move(index, index + 1, down)}><ArrowDownIcon aria-hidden="true" /></Button>
             </li>
           )
         })}
