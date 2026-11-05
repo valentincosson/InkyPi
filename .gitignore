@@ -176,6 +176,7 @@ mock_display_output/
 # Données locales d'une installation, à conserver lors des mises à jour
 /src/config/device.json
 /src/config/*.tmp
+/..env.*.tmp
 /src/static/images/current_image.png
 
 # Environnement de développement local

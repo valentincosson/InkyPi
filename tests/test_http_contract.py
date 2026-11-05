@@ -7,6 +7,7 @@ import json
 import os
 
 import pytest
+from dotenv import dotenv_values
 
 import blueprints.main as main_module
 import blueprints.settings as settings_module
@@ -396,6 +397,51 @@ class TestApiKeys:
     def test_rejects_invalid_key(self, client):
         response = client.post("/api-keys/save", json={"entries": [{"key": "1 bad", "value": "x"}]})
         assert response.status_code == 400
+
+    def test_key_without_value_does_not_wipe_the_file(self, client, tmp_path, monkeypatch):
+        (tmp_path / ".env").write_text("FIRST=one\nNO_VALUE\nLAST=two\n")
+        for key in ("FIRST", "NO_VALUE", "LAST"):
+            monkeypatch.setitem(os.environ, key, "")
+
+        response = client.post(
+            "/api-keys/save",
+            json={"entries": [{"key": key, "keepExisting": True} for key in ("FIRST", "NO_VALUE", "LAST")]},
+        )
+
+        assert response.status_code == 200
+        saved = dotenv_values(tmp_path / ".env")
+        assert saved["FIRST"] == "one"
+        assert saved["LAST"] == "two"
+
+    def test_interrupted_write_keeps_the_keys(self, client, tmp_path, monkeypatch):
+        (tmp_path / ".env").write_text("OPEN_AI_SECRET=super-secret\n")
+        monkeypatch.setitem(os.environ, "NEW_KEY", "")
+
+        def interrupted(source, target):
+            raise OSError("disque plein")
+
+        monkeypatch.setattr(os, "replace", interrupted)
+        response = client.post("/api-keys/save", json={"entries": [{"key": "NEW_KEY", "value": "x"}]})
+
+        assert response.status_code == 500
+        assert (tmp_path / ".env").read_text() == "OPEN_AI_SECRET=super-secret\n"
+        assert [path.name for path in tmp_path.glob("*.tmp")] == []
+
+    @pytest.mark.parametrize("value", ['a"b', 'a "b" c', "it's", "x #y", "a#b", "back\\slash and space", "tab\tinside", "two\nlines"])
+    def test_values_read_back_unchanged(self, client, tmp_path, monkeypatch, value):
+        monkeypatch.setitem(os.environ, "NEW_KEY", "")
+
+        client.post("/api-keys/save", json={"entries": [{"key": "NEW_KEY", "value": value}]})
+
+        assert dotenv_values(tmp_path / ".env")["NEW_KEY"] == value
+
+    def test_removed_key_stops_working_without_restart(self, client, tmp_path, monkeypatch):
+        (tmp_path / ".env").write_text("OLD=removed\n")
+        monkeypatch.setitem(os.environ, "OLD", "removed")
+
+        client.post("/api-keys/save", json={"entries": []})
+
+        assert "OLD" not in os.environ
 
 
 class TestHome:
