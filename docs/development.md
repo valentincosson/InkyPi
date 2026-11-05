@@ -163,3 +163,17 @@ To start over with a clean configuration, delete `.dev/device.json`.
 ```
 
 `tests/test_plugin_forms.py` drives every plugin form in Google Chrome, and is skipped if Playwright or Chrome is missing. If a form changes on purpose, refresh its reference with `UPDATE_PLUGIN_FORM_SNAPSHOTS=1`.
+
+## New interface
+
+The new interface lives in `src/ui/frontend/` and is served on http://localhost:8080/ui/ from the compiled files in `src/ui/static/bundle/`. Those files are committed, so the Raspberry Pi never needs Node.
+
+```bash
+cd src/ui/frontend
+npm ci
+npm run dev    # hot reload on http://localhost:5173/ui/, with scripts/dev.sh running for the data
+npm test
+npm run build  # required before committing: a test fails if the bundle no longer matches the sources
+```
+
+Do not name a folder `lib`, `dist` or `build` in there: the root `.gitignore` would silently ignore it.

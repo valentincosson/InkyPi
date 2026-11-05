@@ -7,6 +7,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 - **Front :** une application React, avec Vite, shadcn, Base UI et Tailwind.
 - **Build :** Node reste sur la machine de développement. Le bundle compilé est versionné, et le Pi n'a besoin que de `git pull`.
 - **Emplacement :** tout le nouveau code vit dans `src/ui/`. `src/templates/`, le moteur et les dossiers de plugins restent intacts autant que possible.
+- **Transition :** la nouvelle interface vit sur `/ui/`, et les pages pas encore portées ouvrent l'ancienne interface à son adresse habituelle. La page d'accueil `/` basculera quand les écrans principaux seront portés.
 - **Formulaires de plugins :** une description par plugin dans `src/ui/`, rendue par un moteur générique. Un plugin sans description ouvre l'ancienne page.
 - **Langue :** anglais par défaut, interface traduisible.
 - **Design :** interface sobre, thèmes Graphite (clair) et Nuit (sombre), navigation en haut, vignettes en mini-illustrations grises, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
@@ -18,7 +19,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 |---|---|---|
 | 0. Filet de sécurité | Roadmap, tests, capture des formulaires, environnement Mac, écriture atomique de la configuration | Terminé |
 | 1. Design | Propositions construites sur shadcn, choix, review | Terminé |
-| 2. Socle | Surcouche, React à partir de `design/prototype/`, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi, attributions | À faire |
+| 2. Socle | `src/ui/` servi sur `/ui/`, React, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi, attributions | Terminé |
 | 3. Réglages et clés d'API | Premières pages React | À faire |
 | 4. Formulaires de plugins | Moteur générique, portage du plus simple au plus complexe, repli sur l'ancienne page | À faire |
 | 5. Accueil | État de l'écran, catalogue, tri | À faire |
@@ -38,7 +39,7 @@ La capture remplit seulement les champs présents à l'ouverture : les lignes aj
 
 ## À reprendre de la review de la maquette
 
-- **Lot 2 (socle) :** le `.gitignore` ignore tous les dossiers `lib/` et `dist/`. Il faut donc éviter ces noms dans `src/ui/`, et adapter `components.json`, qui pointe vers `@/lib/utils`.
+- **Lot 3 (réglages) :** ajouter le choix de la langue. Le français existe déjà, mais rien ne permet encore de l'activer dans l'interface.
 - **Lot 4 (formulaires) :**
   - valider la saisie, avec les erreurs en ligne ;
   - alerter en cas de texte illisible sur son fond ;
@@ -48,6 +49,11 @@ La capture remplit seulement les champs présents à l'ouverture : les lignes aj
 - **Lot 5 (accueil) :** construire un vrai signal pour « Screen connected », ou le remplacer par un état plus modeste.
 - **Lot 7 (aperçu) :** brancher le bouton Update preview sur une vraie génération d'image.
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
+
+## Limites connues de la transition
+
+- L'ancienne interface n'a aucun lien vers `/ui/` : y revenir passe par le bouton Retour du navigateur ou l'adresse. Le passage à `/` les supprimera.
+- Pendant un rendu, le serveur à un seul thread bloque aussi l'interface, fichiers statiques compris.
 
 ## Plus tard
 

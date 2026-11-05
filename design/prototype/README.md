@@ -9,4 +9,4 @@ npm run dev
 
 Vues : `#home`, `#plugins` et `#weather`.
 
-Au lot 2, ce code servira de base à `src/ui/`, et ce dossier disparaîtra. Les attributions des composants shadcn et de la police Geist seront ajoutées à ce moment-là. Les images de `src/assets/` sont de vrais rendus de plugins InkyPi.
+Ses écrans servent de référence aux lots suivants : ce dossier disparaîtra quand ils seront tous portés dans `src/ui/`. Les attributions des composants shadcn et de la police Geist se trouvent dans `docs/attribution.md`. Les images de `src/assets/` sont de vrais rendus de plugins InkyPi.

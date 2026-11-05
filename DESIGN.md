@@ -8,7 +8,7 @@ Référence visuelle de la nouvelle interface. Le code de la maquette se trouve 
 - **Une seule couleur d'accent.** Le reste est neutre, et la couleur vient du contenu réel de l'écran.
 - **Peu de texte, des images.** Le catalogue montre une illustration et un nom. La description reste au survol et sert à la recherche.
 - **L'écran est le héros.** Son cadre et son contenu sont l'élément le plus grand de l'accueil.
-- **Dire la vérité sur l'état.** Aperçu à jour ou non, envoi en cours, dessin lent de l'écran : rien n'est laissé à deviner.
+- **Dire la vérité sur l'état.** Aperçu à jour ou non, envoi en cours, dessin lent de l'écran : rien n'est laissé à deviner. Une panne ne doit jamais ressembler à un écran vide, et une heure ancienne porte sa date.
 
 ## Thèmes
 
@@ -34,8 +34,8 @@ Geist seule, hébergée localement. Corps en 15 px, contrôles en 14 px, titre d
 
 ## Mise en page
 
-- Navigation en haut, fixe à partir de 1024 px, jamais fixe sur mobile pour laisser la place au contenu.
-- Contenu sur 1132 px au maximum, grille de 4 colonnes avec 24 px de gouttière.
+- Navigation en haut, fixe à partir de 1024 px, jamais fixe sur mobile pour laisser la place au contenu. Sous 640 px, elle affiche le texte sans les icônes.
+- Contenu sur 1132 px au maximum, avec 20 px de marge, en grille de 4 colonnes avec 24 px de gouttière.
 - Formulaire : 520 px de réglages à gauche, aperçu et actions fixes à droite.
 - Mobile : aperçu en haut et barre d'actions fixe en bas.
 
