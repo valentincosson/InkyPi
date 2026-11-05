@@ -29,6 +29,14 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export type UiState = {
   device: { name: string; timezone: string; time_format: "12h" | "24h" }
   screen: { refreshed_at: string | null; plugin_id: string | null; plugin_name: string | null; instance: string | null; playlist: string | null; image_url: string }
+  rotation: {
+    playlist: string | null
+    interval_seconds: number
+    running: boolean
+    can_refresh: boolean
+    watching_since: string | null
+    upcoming: { plugin_id: string; instance: string; image_url: string }[]
+  }
 }
 
 export const getState = (signal?: AbortSignal) => request<UiState>("/ui/api/state", { signal })
@@ -66,6 +74,18 @@ export const getApiKeys = (signal?: AbortSignal) => request<{ keys: ApiKey[] }>(
 
 export const saveApiKeys = (entries: ApiKeyEntry[]) =>
   request<unknown>("/api-keys/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entries }) })
+
+export const showNext = () => request<unknown>("/ui/api/show-next", { method: "POST" })
+
+export const refreshInstance = (playlist: string, pluginId: string, instance: string) =>
+  request<unknown>("/display_plugin_instance", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ playlist_name: playlist, plugin_id: pluginId, plugin_instance: instance }),
+  })
+
+export const savePluginOrder = (order: string[]) =>
+  request<unknown>("/api/plugin_order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ order }) })
 
 export type PluginSummary = { id: string; name: string }
 export const getPlugins = (signal?: AbortSignal) => request<{ plugins: PluginSummary[] }>("/ui/api/plugins", { signal })

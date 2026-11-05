@@ -1,1 +1,0 @@
-import{n as e}from"./index-DY9auP03.js";function t(t,n){return t instanceof e?n(`error.refused`,{reason:t.message}):n(`error.notSaved`)}export{t};

@@ -1,5 +1,6 @@
 """Nouvelle interface : le bundle livré sur le Pi, ses données et son repli sur l'ancienne interface."""
 import ast
+from datetime import datetime, timedelta, timezone
 import gzip
 import hashlib
 import json
@@ -10,6 +11,7 @@ import pytest
 import ui.blueprint as ui_module
 
 from model import RefreshInfo
+from refresh_task import PlaylistRefresh
 from ui.blueprint import BUNDLE_DIR, ui_bp
 
 FRONTEND_DIR = os.path.join(os.path.dirname(BUNDLE_DIR), "..", "frontend")
@@ -268,3 +270,161 @@ class TestPluginData:
                 snapshot.write("\n")
         with open(PLUGIN_PARAMS_SNAPSHOT) as snapshot:
             assert actual == json.load(snapshot)
+
+
+def fill_default_playlist(device_config, names):
+    playlist = device_config.get_playlist_manager().get_playlist("Default")
+    playlist.start_time, playlist.end_time = "00:00", "24:00"
+    playlist.plugins = []
+    for name in names:
+        playlist.add_plugin({"plugin_id": "clock", "name": name, "plugin_settings": {}, "refresh": {"interval": 60}})
+    return playlist
+
+
+class TestRotation:
+    def rotation(self, ui_client):
+        return ui_client.get("/ui/api/state").get_json()["rotation"]
+
+    def test_starts_after_the_current_entry_and_wraps_around(self, ui_client, device_config):
+        playlist = fill_default_playlist(device_config, ["A", "B", "C"])
+        playlist.current_plugin_index = 1
+        rotation = self.rotation(ui_client)
+        assert rotation["playlist"] == "Default"
+        assert [item["instance"] for item in rotation["upcoming"]] == ["C", "A", "B"]
+        assert playlist.current_plugin_index == 1
+
+    def test_starts_at_the_first_entry_when_nothing_has_run(self, ui_client, device_config):
+        fill_default_playlist(device_config, ["A", "B"]).current_plugin_index = None
+        assert [item["instance"] for item in self.rotation(ui_client)["upcoming"]] == ["A", "B"]
+
+    def test_never_lists_more_than_four(self, ui_client, device_config):
+        fill_default_playlist(device_config, list("ABCDEF")).current_plugin_index = 0
+        assert [item["instance"] for item in self.rotation(ui_client)["upcoming"]] == list("BCDE")
+
+    def test_survives_an_index_beyond_the_list(self, ui_client, device_config):
+        fill_default_playlist(device_config, ["A", "B"]).current_plugin_index = 7
+        assert [item["instance"] for item in self.rotation(ui_client)["upcoming"]] == ["A", "B"]
+
+    def test_watches_from_the_start_of_the_playlist_window(self, ui_client, device_config):
+        """Une playlist de jour n'est pas en retard le matin : le moteur ne faisait rien la nuit."""
+        device_config.update_value("timezone", "UTC")
+        playlist = fill_default_playlist(device_config, ["A"])
+        playlist.current_plugin_index = 0
+        now = datetime.now(timezone.utc)
+        playlist.start_time, playlist.end_time = (now - timedelta(minutes=5)).strftime("%H:%M"), "24:00"
+        if now.hour == 0 and now.minute < 6:
+            pytest.skip("La fenêtre chevaucherait minuit")
+        since = datetime.fromisoformat(self.rotation(ui_client)["watching_since"])
+        assert timedelta(0) <= now - since <= timedelta(minutes=6)
+
+    def test_watches_from_yesterday_in_a_window_past_midnight(self, ui_client, device_config):
+        device_config.update_value("timezone", "UTC")
+        playlist = fill_default_playlist(device_config, ["A"])
+        playlist.current_plugin_index = 0
+        now = datetime.now(timezone.utc)
+        start = now + timedelta(minutes=30)
+        if start.date() != now.date():
+            pytest.skip("La fenêtre chevaucherait minuit dans l'autre sens")
+        playlist.start_time = start.strftime("%H:%M")
+        playlist.end_time = (start - timedelta(minutes=1)).strftime("%H:%M")
+        since = datetime.fromisoformat(self.rotation(ui_client)["watching_since"])
+        assert timedelta(hours=23) < now - since < timedelta(hours=24)
+
+    def test_a_playlist_that_never_ran_is_not_late(self, ui_client, device_config):
+        fill_default_playlist(device_config, ["A"]).current_plugin_index = None
+        since = datetime.fromisoformat(self.rotation(ui_client)["watching_since"])
+        assert datetime.now(timezone.utc) - since < timedelta(minutes=1)
+
+    def test_an_all_day_playlist_has_no_window(self, ui_client, device_config):
+        """Sinon, un moteur bloqué depuis la veille paraîtrait normal après minuit."""
+        fill_default_playlist(device_config, ["A"]).current_plugin_index = 0
+        assert self.rotation(ui_client)["watching_since"] is None
+
+    def test_nothing_to_watch_without_a_playlist(self, ui_client, device_config):
+        device_config.get_playlist_manager().playlists = []
+        assert self.rotation(ui_client)["watching_since"] is None
+
+    def test_can_refresh_the_entry_on_the_screen(self, ui_client, device_config):
+        fill_default_playlist(device_config, ["A"])
+        device_config.refresh_info = RefreshInfo("Playlist", "clock", "2026-01-01T08:00:00+01:00", "x", playlist="Default", plugin_instance="A")
+        assert self.rotation(ui_client)["can_refresh"] is True
+
+    @pytest.mark.parametrize(
+        "playlist,plugin_id,instance",
+        [("Gone", "clock", "A"), ("Default", "clock", "Gone"), (None, "clock", None), ("Default", "not_installed", "A")],
+    )
+    def test_cannot_refresh_what_no_longer_exists(self, ui_client, device_config, playlist, plugin_id, instance):
+        fill_default_playlist(device_config, ["A"])
+        device_config.refresh_info = RefreshInfo("Playlist", plugin_id, "2026-01-01T08:00:00+01:00", "x", playlist=playlist, plugin_instance=instance)
+        assert self.rotation(ui_client)["can_refresh"] is False
+
+    def test_encodes_names_in_image_addresses(self, ui_client, device_config):
+        fill_default_playlist(device_config, ["Météo été"]).current_plugin_index = None
+        url = self.rotation(ui_client)["upcoming"][0]["image_url"]
+        assert url == "/plugin_instance_image/Default/clock/M%C3%A9t%C3%A9o%20%C3%A9t%C3%A9"
+
+    def test_no_active_playlist(self, ui_client, device_config):
+        manager = device_config.get_playlist_manager()
+        manager.playlists = []
+        rotation = self.rotation(ui_client)
+        assert rotation["playlist"] is None
+        assert rotation["upcoming"] == []
+
+    def test_invalid_time_zone_does_not_break_the_page(self, ui_client, device_config):
+        device_config.update_value("timezone", "Nowhere/Land")
+        assert ui_client.get("/ui/api/state").status_code == 200
+
+    def test_reports_when_updates_are_not_running(self, ui_client, refresh_task):
+        refresh_task.running = False
+        assert self.rotation(ui_client)["running"] is False
+
+
+class TestShowNext:
+    def test_advances_the_rotation_and_forces_a_render(self, ui_client, device_config, refresh_task):
+        playlist = fill_default_playlist(device_config, ["A", "B"])
+        playlist.current_plugin_index = 0
+        response = ui_client.post("/ui/api/show-next")
+        assert response.status_code == 200
+        action = refresh_task.actions[0]
+        assert isinstance(action, PlaylistRefresh)
+        assert action.plugin_instance.name == "B"
+        assert action.force is True
+        assert playlist.current_plugin_index == 1
+
+    def test_a_failure_does_not_skip_an_entry(self, ui_client, device_config, refresh_task, monkeypatch):
+        playlist = fill_default_playlist(device_config, ["A", "B"])
+        playlist.current_plugin_index = 0
+
+        def fail(action):
+            raise RuntimeError("no network")
+
+        monkeypatch.setattr(refresh_task, "manual_update", fail)
+        response = ui_client.post("/ui/api/show-next")
+        assert response.status_code == 500
+        assert response.get_json()["error"] == "no network"
+        assert playlist.current_plugin_index == 0
+
+    def test_plugin_that_no_longer_exists_is_not_a_success(self, ui_client, device_config, refresh_task):
+        """Le moteur l'ignorerait sans rien dire : la page annoncerait un affichage qui n'a pas eu lieu."""
+        playlist = fill_default_playlist(device_config, ["A"])
+        playlist.plugins[0].plugin_id = "not_installed"
+        playlist.current_plugin_index = None
+        assert ui_client.post("/ui/api/show-next").status_code == 409
+        assert refresh_task.actions == []
+        assert playlist.current_plugin_index is None
+
+    def test_refuses_when_nothing_can_be_shown(self, ui_client, device_config, refresh_task):
+        device_config.get_playlist_manager().playlists = []
+        assert ui_client.post("/ui/api/show-next").status_code == 409
+        assert refresh_task.actions == []
+
+    def test_refuses_when_updates_are_not_running(self, ui_client, device_config, refresh_task):
+        """manual_update se contenterait de ne rien faire : la page croirait à un succès."""
+        fill_default_playlist(device_config, ["A"])
+        refresh_task.running = False
+        assert ui_client.post("/ui/api/show-next").status_code == 409
+
+    def test_a_simple_visit_changes_nothing(self, ui_client, device_config, refresh_task):
+        fill_default_playlist(device_config, ["A"])
+        assert ui_client.get("/ui/api/show-next").status_code != 200
+        assert refresh_task.actions == []

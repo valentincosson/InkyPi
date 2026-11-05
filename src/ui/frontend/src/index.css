@@ -141,7 +141,7 @@ html.light {
   --popover: #ffffff; --popover-foreground: #18181b; --primary: #18181b; --primary-foreground: #ffffff;
   --secondary: #f4f4f5; --secondary-foreground: #18181b; --muted: #f4f4f5; --muted-foreground: #5f5f68;
   --accent: #e8e8eb; --accent-foreground: #18181b; --destructive: #b42318; --border: #e4e4e7;
-  --input: #8e8e98; --control: #d4d4d9; --ring: #3f5bd9; --radius: 0.5rem; --bezel: #1f1f23; --good: #15803d; --warn: #b45309; color-scheme: light;
+  --input: #8e8e98; --control: #d4d4d9; --ring: #3f5bd9; --radius: 0.5rem; --bezel: #1f1f23; --warn: #b45309; color-scheme: light;
   --art-bg: #f3f3f5; --art-1: #ffffff; --art-2: #c4c4cb; --art-ink: #3f3f46;
 }
 html.dark {
@@ -149,7 +149,7 @@ html.dark {
   --popover: #1e2129; --popover-foreground: #eceef2; --primary: #a9b8ff; --primary-foreground: #12141a;
   --secondary: #23262f; --secondary-foreground: #eceef2; --muted: #23262f; --muted-foreground: #a4aab6;
   --accent: #262a35; --accent-foreground: #eceef2; --destructive: #f4877a; --border: #2a2e39;
-  --input: #7c8494; --control: #3a3f4c; --ring: #a9b8ff; --radius: 0.5rem; --bezel: #2d3039; --good: #6ee7a0; --warn: #fbbf24; color-scheme: dark;
+  --input: #7c8494; --control: #3a3f4c; --ring: #a9b8ff; --radius: 0.5rem; --bezel: #2d3039; --warn: #fbbf24; color-scheme: dark;
   --art-bg: #1f2229; --art-1: #2b2f39; --art-2: #4b5160; --art-ink: #c9cdd6;
 }
 body { font-family: "Geist Variable", system-ui, sans-serif; font-size: 15px; }

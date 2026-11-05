@@ -1,0 +1,1 @@
+import{o as e}from"./index-Dg1sn3EK.js";function t(t,n){return t instanceof e?n(`error.refused`,{reason:t.message}):n(`error.notSaved`)}export{t};

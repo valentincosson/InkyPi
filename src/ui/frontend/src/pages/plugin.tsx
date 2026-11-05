@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { definitions } from "@/forms/definitions"
 import { pluginLabel } from "@/forms/registry"
 import { fromDraft, initialValues, isVisible, sectionsOf, toDraft, toEntries, validate } from "@/forms/engine"
-import { FieldList, FormProvider, Segmented } from "@/forms/fields"
+import { FieldList, FormProvider, LabelledSegmented } from "@/forms/fields"
 import { instanceNameError, refreshError, refreshFromStored, suggestedName, toRefreshSettings, type RefreshUnit, type RefreshValues } from "@/forms/refresh"
 import type { Definition, FileValue, FormValues, Value } from "@/forms/types"
 import { useI18n } from "@/i18n"
@@ -47,7 +47,7 @@ function RefreshFields({ prefix, values, onChange }: { prefix: string; values: R
   const one = values.interval.trim() === "1"
   return (
     <div className="grid gap-3">
-      <Segmented label={t("form.refreshLabel")} value={values.type} onChange={(type) => onChange({ ...values, type: type as RefreshValues["type"] })} options={[{ value: "interval", label: t("form.refreshEvery") }, { value: "scheduled", label: t("form.refreshDaily") }]} />
+      <LabelledSegmented label={t("form.refreshLabel")} value={values.type} onChange={(type) => onChange({ ...values, type: type as RefreshValues["type"] })} options={[{ value: "interval", label: t("form.refreshEvery") }, { value: "scheduled", label: t("form.refreshDaily") }]} />
       {values.type === "interval" ? (
         <div className="grid grid-cols-[6rem_minmax(0,1fr)] gap-2">
           <Input id={`${prefix}-interval`} aria-label={t("form.refreshEvery")} className="min-h-10 tabular-nums" inputMode="numeric" autoComplete="off" value={values.interval} onChange={(event) => onChange({ ...values, interval: event.target.value })} />

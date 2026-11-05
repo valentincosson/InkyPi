@@ -22,7 +22,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | 2. Socle | `src/ui/` servi sur `/ui/`, React, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi, attributions | Terminé |
 | 3. Réglages et clés d'API | Pages `/ui/settings` et `/ui/api-keys`, choix de la langue, enregistrement sûr des clés | Terminé |
 | 4. Formulaires de plugins | Moteur générique, les 20 plugins portés sur `/ui/plugin/<id>`, catalogue provisoire sur `/ui/plugins`, repli sur l'ancienne page | Terminé |
-| 5. Accueil | État de l'écran, catalogue, tri | À faire |
+| 5. Accueil | État réel de l'écran, à suivre, affichage du suivant, catalogue avec illustrations, recherche, tri | Terminé |
 | 6. Playlists | Frise sur 24 h, priorité visible, réordonnancement, bugs corrigés | À faire |
 | 7. Aperçu sans envoi à l'écran | Génération seule d'une image | À faire |
 
@@ -39,7 +39,6 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 
 ## À reprendre de la review de la maquette
 
-- **Lot 5 (accueil) :** construire un vrai signal pour « Screen connected », ou le remplacer par un état plus modeste.
 - **Lot 7 (aperçu) :** brancher le bouton Update preview sur une vraie génération d'image.
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
 
@@ -50,7 +49,10 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 - La langue choisie ne concerne que la nouvelle interface : l'ancienne reste en anglais.
 - La confirmation avant de quitter les réglages ne couvre pas le bouton Retour du navigateur à l'intérieur de la nouvelle interface. Les formulaires de plugins n'ont pas ce problème : ils gardent un brouillon, sauf pour les fichiers choisis.
 - L'ancienne page des playlists ouvre encore l'ancien formulaire d'un plugin ; le lot 6 la remplace.
-- Le catalogue `/ui/plugins` reste minimal jusqu'au lot 5.
+- Rien ne peut confirmer que l'écran est branché : les pilotes n'ont aucun retour matériel. L'accueil montre la dernière actualisation et prévient si elle tarde, sans parler de connexion. L'heure du prochain changement reste une estimation : elle ne compte ni le temps de rendu, ni un changement d'intervalle. L'avertissement se base sur l'horloge du navigateur et de l'appareil : un grand écart entre les deux peut le déclencher à tort.
+- « Show next » et le moteur avancent la rotation sans verrou commun : un clic au même instant qu'un réveil du moteur peut sauter une entrée. Même limite dans la route `/display_plugin_instance` d'origine.
+- Les messages renvoyés par le serveur et les plugins restent en anglais dans l'interface française.
+- « À suivre » suit la playlist active maintenant : une playlist qui prendra le relais plus tard dans la journée n'y figure pas. Le lot 6 montrera la journée entière.
 - Comme dans l'ancienne page, les unités de Weather sont en °F par défaut.
 - Une copie d'une entrée Image Upload partage ses fichiers avec l'original : supprimer l'une retire les images de l'autre, et deux images de même nom se remplacent. C'était déjà le cas dans l'ancienne page ; à revoir au lot 6, qui gère la suppression.
 - Enregistrer une entrée Image Upload fait repartir sa rotation de la première image, comme dans l'ancienne page.

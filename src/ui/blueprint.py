@@ -2,8 +2,10 @@
 
 Le bundle est versionné dans static/bundle : le Pi n'exécute jamais Node.
 """
+import logging
 import mimetypes
 import os
+from datetime import datetime, timedelta
 from urllib.parse import quote
 
 import pytz
@@ -11,9 +13,13 @@ from flask import Blueprint, abort, current_app, jsonify, request, send_from_dir
 
 from blueprints import apikeys
 from plugins.plugin_registry import get_plugin_instance
+from refresh_task import PlaylistRefresh
+
+logger = logging.getLogger(__name__)
 
 BUNDLE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundle")
 ONE_YEAR = 31_536_000
+UP_NEXT_COUNT = 4
 
 ui_bp = Blueprint("ui", __name__, url_prefix="/ui")
 
@@ -41,6 +47,63 @@ def asset(filename):
     return response
 
 
+def _now(device_config):
+    try:
+        return datetime.now(pytz.timezone(device_config.get_config("timezone", default="UTC")))
+    except pytz.UnknownTimeZoneError:
+        return datetime.now(pytz.UTC)
+
+
+def _active_playlist(device_config):
+    """La playlist que le moteur choisirait maintenant, avec le même calcul que lui."""
+    return device_config.get_playlist_manager().determine_active_playlist(_now(device_config))
+
+
+def _watching_since(playlist, now):
+    """Depuis quand le moteur devrait faire tourner cette playlist : avant, un écran immobile est normal."""
+    if playlist.current_plugin_index is None:
+        return now
+    # Active toute la journée, elle ne s'interrompt jamais : minuit n'est pas un nouveau départ.
+    if playlist.start_time == "00:00" and playlist.end_time == "24:00":
+        return None
+    hours, minutes = playlist.start_time.split(":")
+    start = now.replace(hour=int(hours), minute=int(minutes), second=0, microsecond=0)
+    return start if start <= now else start - timedelta(days=1)
+
+
+def _can_refresh(device_config):
+    """L'entrée affichée peut être régénérée si elle existe encore et que son plugin est installé."""
+    info = device_config.get_refresh_info()
+    playlist = device_config.get_playlist_manager().get_playlist(info.playlist) if info.playlist else None
+    instance = playlist.find_plugin(info.plugin_id, info.plugin_instance) if playlist else None
+    return bool(instance and device_config.get_plugin(info.plugin_id))
+
+
+def _rotation(device_config):
+    """Décrit la suite de la rotation sans la faire avancer."""
+    playlist = _active_playlist(device_config)
+    plugins = playlist.plugins if playlist else []
+    index = playlist.current_plugin_index if playlist else None
+    start = 0 if index is None else index + 1
+    upcoming = [plugins[(start + offset) % len(plugins)] for offset in range(min(len(plugins), UP_NEXT_COUNT))]
+    since = _watching_since(playlist, _now(device_config)) if upcoming else None
+    return {
+        "playlist": playlist.name if playlist else None,
+        "interval_seconds": device_config.get_config("plugin_cycle_interval_seconds", default=3600),
+        "running": bool(current_app.config["REFRESH_TASK"].running),
+        "can_refresh": _can_refresh(device_config),
+        "watching_since": since.isoformat() if since else None,
+        "upcoming": [
+            {
+                "plugin_id": instance.plugin_id,
+                "instance": instance.name,
+                "image_url": "/plugin_instance_image/" + "/".join(quote(part, safe="") for part in (playlist.name, instance.plugin_id, instance.name)),
+            }
+            for instance in upcoming
+        ],
+    }
+
+
 @ui_bp.route("/api/state")
 def state():
     """Décrit l'appareil et ce qui est affiché sur l'écran."""
@@ -62,7 +125,33 @@ def state():
             "playlist": info.playlist,
             "image_url": f"/api/current_image?v={version}",
         },
+        "rotation": _rotation(device_config),
     })
+
+
+@ui_bp.route("/api/show-next", methods=["POST"])
+def show_next():
+    """Passe à l'entrée suivante et fait avancer la rotation, pour ne pas la remontrer au cycle d'après."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    refresh_task = current_app.config["REFRESH_TASK"]
+    if not refresh_task.running:
+        return jsonify({"error": "Automatic updates are not running."}), 409
+    playlist = _active_playlist(device_config)
+    if not playlist or not playlist.plugins:
+        return jsonify({"error": "No playlist has anything to show right now."}), 409
+
+    previous_index = playlist.current_plugin_index
+    instance = playlist.get_next_plugin()
+    if not device_config.get_plugin(instance.plugin_id):
+        playlist.current_plugin_index = previous_index
+        return jsonify({"error": f"The plugin of {instance.name} is no longer installed."}), 409
+    try:
+        refresh_task.manual_update(PlaylistRefresh(playlist, instance, force=True))
+    except Exception as error:
+        playlist.current_plugin_index = previous_index
+        logger.exception("Could not show the next plugin")
+        return jsonify({"error": str(error)}), 500
+    return jsonify({"success": True})
 
 
 @ui_bp.route("/api/settings")

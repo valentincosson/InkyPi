@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import { definitions } from "./definitions"
 import { allFields, initialValues, sentNames, toEntries } from "./engine"
+import { hasForm, PLUGIN_META } from "./registry"
 
 const ROOT = join(import.meta.dirname, "..", "..", "..", "..", "..")
 const SNAPSHOTS = join(ROOT, "tests", "snapshots")
@@ -72,6 +73,18 @@ describe.each(plugins)("%s", (id) => {
 describe("descriptions", () => {
   it("covers exactly the installed plugins", () => {
     expect(Object.keys(definitions).sort()).toEqual([...plugins].sort())
+  })
+
+  it("matches the light catalogue data", () => {
+    expect(Object.keys(PLUGIN_META).sort()).toEqual(Object.keys(definitions).sort())
+    expect(hasForm("constructor")).toBe(false)
+  })
+
+  it("flags the plugins that always need a key", () => {
+    // Weather reste utilisable sans clé avec Open-Meteo : le catalogue ne le signale pas.
+    const always = Object.entries(definitions).filter(([id, definition]) => definition.apiKey && id !== "weather").map(([id]) => id).sort()
+    const flagged = Object.entries(PLUGIN_META).filter(([, meta]) => meta.needsKey).map(([id]) => id).sort()
+    expect(flagged).toEqual(always)
   })
 
 })

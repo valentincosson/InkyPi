@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react"
 import { ChevronDownIcon, PlusIcon, Trash2Icon, UploadIcon } from "lucide-react"
 import { Choice } from "@/components/choice"
+import { Segmented } from "@/components/segmented"
 import { Button } from "@/components/ui/button"
 import { Field as FieldBox, FieldContent, FieldDescription, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -58,23 +59,11 @@ function Labelled({ id, label, help, error, children }: { id: string; label: str
   )
 }
 
-export function Segmented({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
+export function LabelledSegmented({ label, value, options, onChange }: { label: string; value: string; options: { value: string; label: string }[]; onChange: (value: string) => void }) {
   return (
     <div className="grid gap-2">
       <span className={groupLabel}>{label}</span>
-      <div className="flex w-fit max-w-full flex-wrap gap-0.5 rounded-[var(--radius)] bg-muted p-0.5" role="group" aria-label={label}>
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={value === option.value}
-            onClick={() => onChange(option.value)}
-            className={`min-h-9 min-w-11 rounded-[calc(var(--radius)-2px)] px-3 text-sm font-medium transition-colors ${value === option.value ? "bg-card text-foreground shadow-[0_0_0_1px_var(--control),0_1px_2px_rgb(0_0_0/.08)]" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <Segmented label={label} value={value} options={options} onChange={onChange} />
     </div>
   )
 }
@@ -348,7 +337,7 @@ function FieldView({ field }: { field: Field }) {
     case "select":
       return <Labelled id={id} label={label} help={help}><Choice id={id} value={value} onChange={onChange} options={choices(field, params).map((option) => ({ value: option.value, label: optionText(option, t) }))} /></Labelled>
     case "segmented":
-      return <Segmented label={label} value={value} onChange={onChange} options={choices(field, params).map((option) => ({ value: option.value, label: optionText(option, t) }))} />
+      return <LabelledSegmented label={label} value={value} onChange={onChange} options={choices(field, params).map((option) => ({ value: option.value, label: optionText(option, t) }))} />
     case "inks":
       return <Inks name={field.name} label={label} value={value} onChange={onChange} />
     case "color":
