@@ -32,3 +32,37 @@ export type UiState = {
 }
 
 export const getState = (signal?: AbortSignal) => request<UiState>("/ui/api/state", { signal })
+
+export type DeviceSettings = {
+  name: string
+  orientation: string
+  rotated: boolean
+  log_system_stats: boolean
+  timezone: string | null
+  time_format: string
+  interval_seconds: number
+  image: { saturation: number; contrast: number; sharpness: number; brightness: number; inky_saturation: number | null }
+  inky_display: boolean
+  timezones: string[]
+}
+
+export const getSettings = (signal?: AbortSignal) => request<DeviceSettings>("/ui/api/settings", { signal })
+
+export const saveSettings = (body: FormData) => request<unknown>("/save_settings", { method: "POST", body })
+
+/** L'appareil s'arrête : la réponse peut ne jamais arriver, et son absence ne prouve rien. */
+export function requestPower(action: "restart" | "shutdown") {
+  void fetch("/shutdown", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ reboot: action === "restart" }),
+  }).catch(() => undefined)
+}
+
+export type ApiKey = { key: string; has_value: boolean }
+export type ApiKeyEntry = { key: string; keepExisting: true } | { key: string; value: string }
+
+export const getApiKeys = (signal?: AbortSignal) => request<{ keys: ApiKey[] }>("/ui/api/api-keys", { signal })
+
+export const saveApiKeys = (entries: ApiKeyEntry[]) =>
+  request<unknown>("/api-keys/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ entries }) })

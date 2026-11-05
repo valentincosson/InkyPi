@@ -166,8 +166,12 @@ h1 { letter-spacing: -0.025em; }
 [data-slot="button"][data-variant="outline"], [data-slot="button"].border-border { border-color: var(--control); }
 [data-slot="button"][aria-disabled="true"] { background: var(--muted); color: var(--muted-foreground); border-color: var(--border); cursor: not-allowed; }
 [data-slot="input-group"] input { min-height: 38px; }
+[data-slot="input-group"] input:focus-visible { outline: none; }
+html { scroll-padding-bottom: 6rem; }
 @media (min-width: 1024px) { html { scroll-padding-top: 76px; } }
+[data-slot="button"][aria-busy="true"] { opacity: 0.7; cursor: progress; }
+@media (pointer: coarse) { [data-slot="select-item"], [data-slot="combobox-item"] { min-height: 44px; } }
 .device-progress { position: absolute; left: 10px; right: 10px; bottom: 4px; height: 2px; overflow: hidden; border-radius: 2px; background: rgb(255 255 255 / .18); }
 .device-progress::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 35%; background: #ffffff; animation: device-progress 1.2s ease-in-out infinite; }
 @keyframes device-progress { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .animate-spin { animation: none; } .device-progress::after { animation: none; width: 100%; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .animate-spin, [data-slot^="alert-dialog"] { animation: none !important; } .device-progress::after { animation: none; width: 100%; } }

@@ -155,3 +155,62 @@ class TestState:
         response = ui_client.get("/ui/api/nope")
         assert response.status_code == 404
         assert response.get_json() == {"error": "Not found"}
+
+
+class TestSettingsData:
+    def test_describes_the_device(self, ui_client, device_config):
+        device_config.update_config({
+            "orientation": "vertical",
+            "inverted_image": "on",
+            "log_system_stats": None,
+            "timezone": "Europe/Paris",
+            "time_format": "24h",
+            "plugin_cycle_interval_seconds": 5400,
+            "image_settings": {"saturation": 1.2, "contrast": 0.8, "sharpness": 1.4, "brightness": 0.9, "inky_saturation": 0.65},
+        })
+
+        body = ui_client.get("/ui/api/settings").get_json()
+
+        assert body["orientation"] == "vertical"
+        assert body["rotated"] is True
+        assert body["log_system_stats"] is False
+        assert body["timezone"] == "Europe/Paris"
+        assert body["time_format"] == "24h"
+        assert body["interval_seconds"] == 5400
+        assert body["image"] == {"saturation": 1.2, "contrast": 0.8, "sharpness": 1.4, "brightness": 0.9, "inky_saturation": 0.65}
+        assert "Europe/Paris" in body["timezones"]
+
+    def test_fresh_install_has_usable_defaults(self, ui_client, device_config, device_file):
+        """Le fichier livré par l'installation ne contient ni fuseau ni réglages d'image."""
+        for key in ("timezone", "time_format", "plugin_cycle_interval_seconds", "image_settings", "display_type", "log_system_stats"):
+            device_config.config.pop(key, None)
+
+        body = ui_client.get("/ui/api/settings").get_json()
+
+        assert body["timezone"] is None
+        assert body["time_format"] == "12h"
+        assert body["interval_seconds"] == 3600
+        assert body["image"]["brightness"] == 1.0
+        assert body["image"]["inky_saturation"] is None
+        assert body["inky_display"] is True
+
+    def test_other_displays_have_no_inky_setting(self, ui_client, device_config):
+        device_config.update_value("display_type", "mock")
+        assert ui_client.get("/ui/api/settings").get_json()["inky_display"] is False
+
+
+class TestApiKeysData:
+    def test_never_exposes_values(self, ui_client, tmp_path):
+        (tmp_path / ".env").write_text("OPEN_AI_SECRET=super-secret\nEMPTY=\nNO_VALUE\n")
+
+        response = ui_client.get("/ui/api/api-keys")
+
+        assert "super-secret" not in response.get_data(as_text=True)
+        assert response.get_json()["keys"] == [
+            {"key": "OPEN_AI_SECRET", "has_value": True},
+            {"key": "EMPTY", "has_value": False},
+            {"key": "NO_VALUE", "has_value": False},
+        ]
+
+    def test_no_file_means_no_keys(self, ui_client):
+        assert ui_client.get("/ui/api/api-keys").get_json() == {"keys": []}

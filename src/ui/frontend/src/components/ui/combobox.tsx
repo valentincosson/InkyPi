@@ -55,10 +55,12 @@ function ComboboxInput({
   disabled = false,
   showTrigger = true,
   showClear = false,
+  triggerLabel = "Show suggestions",
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean
   showClear?: boolean
+  triggerLabel?: string
 }) {
   return (
     <InputGroup className={cn("w-auto", className)}>
@@ -69,7 +71,7 @@ function ComboboxInput({
       <InputGroupAddon align="inline-end">
         {showTrigger && (
           <InputGroupButton
-            aria-label="Show suggestions"
+            aria-label={triggerLabel}
             size="icon-xs"
             variant="ghost"
             render={<ComboboxTrigger />}

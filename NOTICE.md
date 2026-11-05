@@ -11,6 +11,7 @@ Ce fork refond l'interface web, à partir de novembre 2026.
 | `src/ui/` | Nouvelle interface web, servie sur `/ui/` | Novembre 2026 |
 | `src/inkypi.py` | Enregistrement de la nouvelle interface, configuration de développement | Novembre 2026 |
 | `src/config.py` | Écriture atomique de la configuration | Novembre 2026 |
+| `src/blueprints/apikeys.py` | Écriture sûre du fichier `.env`, valeurs relues à l'identique, clé supprimée retirée de l'environnement | Novembre 2026 |
 | `tests/`, `scripts/dev.sh`, `pytest.ini`, `.gitignore`, `install/requirements-test.txt`, `docs/development.md`, `docs/attribution.md` | Tests, environnement de développement, attributions | Novembre 2026 |
 | `README.md`, `NOTICE.md`, `roadmap.md`, `DESIGN.md`, `CLAUDE.md`, `design/` | Documents et maquette de la refonte | Novembre 2026 |
 

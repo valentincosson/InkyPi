@@ -26,7 +26,7 @@ Clair ou sombre selon le système, avec une bascule. Le choix est conservé sous
 | Bordure de champ | `#8e8e98` | `#7c8494` |
 | Focus | `#3f5bd9` | `#a9b8ff` |
 
-Les couleurs d'état sont réservées à leur rôle : vert pour la connexion, ambre pour un aperçu périmé, rouge pour une erreur.
+Les couleurs d'état sont réservées à leur rôle : vert pour la connexion, ambre pour un aperçu périmé, rouge pour une erreur ou une action destructive. Une action destructive reste un bouton à contour avec un texte rouge, et demande toujours confirmation.
 
 ## Typographie
 
@@ -38,6 +38,7 @@ Geist seule, hébergée localement. Corps en 15 px, contrôles en 14 px, titre d
 - Contenu sur 1132 px au maximum, avec 20 px de marge, en grille de 4 colonnes avec 24 px de gouttière.
 - Formulaire : 520 px de réglages à gauche, aperçu et actions fixes à droite.
 - Mobile : aperçu en haut et barre d'actions fixe en bas.
+- Réglages : titre de section dans la première colonne, champs sur 640 px au maximum dans les suivantes. La barre d'enregistrement ne reste fixe que s'il y a quelque chose à dire ou à enregistrer.
 
 ## Illustrations
 

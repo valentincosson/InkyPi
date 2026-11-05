@@ -6,7 +6,10 @@ import mimetypes
 import os
 from urllib.parse import quote
 
+import pytz
 from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
+
+from blueprints import apikeys
 
 BUNDLE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundle")
 ONE_YEAR = 31_536_000
@@ -48,7 +51,7 @@ def state():
         "device": {
             "name": device_config.get_config("name", default="InkyPi"),
             "timezone": device_config.get_config("timezone", default="UTC"),
-            "time_format": device_config.get_config("time_format", default="24h"),
+            "time_format": device_config.get_config("time_format", default="12h"),
         },
         "screen": {
             "refreshed_at": info.refresh_time,
@@ -59,6 +62,38 @@ def state():
             "image_url": f"/api/current_image?v={version}",
         },
     })
+
+
+@ui_bp.route("/api/settings")
+def settings():
+    """Décrit les réglages de l'appareil. L'enregistrement passe par /save_settings."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    image = device_config.get_config("image_settings", default={})
+    return jsonify({
+        "name": device_config.get_config("name", default="InkyPi"),
+        "orientation": device_config.get_config("orientation", default="horizontal"),
+        "rotated": bool(device_config.get_config("inverted_image", default=False)),
+        "log_system_stats": bool(device_config.get_config("log_system_stats", default=False)),
+        "timezone": device_config.get_config("timezone", default=None),
+        "time_format": device_config.get_config("time_format", default="12h"),
+        "interval_seconds": device_config.get_config("plugin_cycle_interval_seconds", default=3600),
+        "image": {
+            "saturation": image.get("saturation", 1.0),
+            "contrast": image.get("contrast", 1.0),
+            "sharpness": image.get("sharpness", 1.0),
+            "brightness": image.get("brightness", 1.0),
+            "inky_saturation": image.get("inky_saturation"),
+        },
+        "inky_display": device_config.get_config("display_type", default="inky") == "inky",
+        "timezones": sorted(pytz.all_timezones_set),
+    })
+
+
+@ui_bp.route("/api/api-keys")
+def api_keys():
+    """Liste les clés enregistrées, jamais leurs valeurs. L'enregistrement passe par /api-keys/save."""
+    entries = apikeys.parse_env_file(apikeys.get_env_path())
+    return jsonify({"keys": [{"key": key, "has_value": bool(value)} for key, value in entries]})
 
 
 @ui_bp.route("/api/<path:_unknown>")

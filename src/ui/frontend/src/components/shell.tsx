@@ -14,8 +14,8 @@ const nav: { label: Key; href: string; icon: LucideIcon; ported?: boolean }[] = 
   { label: "nav.screen", href: "/", icon: MonitorIcon, ported: true },
   { label: "nav.plugins", href: "/", icon: PuzzleIcon },
   { label: "nav.playlists", href: "/playlist", icon: LayersIcon },
-  { label: "nav.settings", href: "/settings", icon: SettingsIcon },
-  { label: "nav.apiKeys", href: "/api-keys", icon: KeyRoundIcon },
+  { label: "nav.settings", href: "/settings", icon: SettingsIcon, ported: true },
+  { label: "nav.apiKeys", href: "/api-keys", icon: KeyRoundIcon, ported: true },
 ]
 
 const width = "mx-auto w-full max-w-[calc(1132px+2.5rem)] px-5"
