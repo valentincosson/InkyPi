@@ -9,7 +9,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 - **Emplacement :** tout le nouveau code vit dans `src/ui/`. `src/templates/`, le moteur et les dossiers de plugins restent intacts autant que possible.
 - **Formulaires de plugins :** une description par plugin dans `src/ui/`, rendue par un moteur générique. Un plugin sans description ouvre l'ancienne page.
 - **Langue :** anglais par défaut, interface traduisible.
-- **Design :** plusieurs propositions avec `frontend-design`, puis review avec `impeccable`.
+- **Design :** interface sobre, thèmes Graphite (clair) et Nuit (sombre), navigation en haut, vignettes en mini-illustrations grises, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
 - **Validation :** sur Mac uniquement, avec l'écran simulé.
 
 ## Lots
@@ -17,8 +17,8 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | Lot | Contenu | État |
 |---|---|---|
 | 0. Filet de sécurité | Roadmap, tests, capture des formulaires, environnement Mac, écriture atomique de la configuration | Terminé |
-| 1. Design | Propositions construites sur shadcn, choix, review | En cours |
-| 2. Socle | Surcouche, React, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi | À faire |
+| 1. Design | Propositions construites sur shadcn, choix, review | Terminé |
+| 2. Socle | Surcouche, React à partir de `design/prototype/`, routeur, client API, traductions, `NOTICE.md`, crédit à InkyPi, attributions | À faire |
 | 3. Réglages et clés d'API | Premières pages React | À faire |
 | 4. Formulaires de plugins | Moteur générique, portage du plus simple au plus complexe, repli sur l'ancienne page | À faire |
 | 5. Accueil | État de l'écran, catalogue, tri | À faire |
@@ -35,6 +35,19 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'existant, défauts 
 - **`image_album` :** `updateTitleOptions` est appelée mais n'est définie nulle part.
 
 La capture remplit seulement les champs présents à l'ouverture : les lignes ajoutées dynamiquement (`calendar`, `todo_list`) et les fichiers envoyés (`image_upload`) restent à couvrir au lot 4.
+
+## À reprendre de la review de la maquette
+
+- **Lot 2 (socle) :** le `.gitignore` ignore tous les dossiers `lib/` et `dist/`. Il faut donc éviter ces noms dans `src/ui/`, et adapter `components.json`, qui pointe vers `@/lib/utils`.
+- **Lot 4 (formulaires) :**
+  - valider la saisie, avec les erreurs en ligne ;
+  - alerter en cas de texte illisible sur son fond ;
+  - conserver le brouillon en cas de sortie du formulaire ;
+  - dessiner l'échec d'envoi ;
+  - choisir un service de géocodage pour la recherche de ville.
+- **Lot 5 (accueil) :** construire un vrai signal pour « Screen connected », ou le remplacer par un état plus modeste.
+- **Lot 7 (aperçu) :** brancher le bouton Update preview sur une vraie génération d'image.
+- **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
 
 ## Plus tard
 
