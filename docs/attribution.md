@@ -75,3 +75,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
+
+## New web interface
+The interface in `src/ui/` ships the components below and their dependencies. The full list, with the licence texts, is in [THIRD_PARTY_LICENSES.txt](../src/ui/static/bundle/THIRD_PARTY_LICENSES.txt).
+
+| Name | License |
+|---|---|
+| [React](https://react.dev) | MIT |
+| [Base UI](https://base-ui.com) | MIT |
+| [shadcn/ui](https://ui.shadcn.com) components, copied into `src/ui/frontend/src/components/ui/` | MIT |
+| [Tailwind CSS](https://tailwindcss.com) | MIT |
+| [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
+| [class-variance-authority](https://cva.style) | Apache-2.0 |
+| [cn](https://github.com/shadcn-ui/cn) utility | MIT |
+| [Lucide](https://lucide.dev) icons | ISC |
+| [wouter](https://github.com/molefrog/wouter) | Unlicense |
+| [Geist](https://vercel.com/font) font, packaged by [Fontsource](https://fontsource.org) | SIL OFL v1.1 |
