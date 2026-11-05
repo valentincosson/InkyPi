@@ -256,6 +256,31 @@ class TestPluginInstances:
         assert path == str(saved / "fond.png")
         assert os.path.exists(path)
 
+    @pytest.mark.parametrize("route", ["/add_plugin", "/update_now"])
+    def test_new_images_join_the_existing_ones(self, client, device_config, refresh_task, monkeypatch, tmp_path, route):
+        saved = tmp_path / "static" / "images" / "saved"
+        saved.mkdir(parents=True)
+        monkeypatch.setattr(app_utils, "resolve_path", lambda path: str(tmp_path / path))
+        refresh = refresh_settings(instance_name="Copy", playlist="Default")
+
+        response = client.post(
+            route,
+            data={
+                "plugin_id": "image_upload",
+                "refresh_settings": refresh,
+                "imageFiles[]": ["/existing.png", (io.BytesIO(b"png"), "new.png")],
+            },
+            content_type="multipart/form-data",
+        )
+
+        assert response.status_code == 200
+        settings = (
+            find_instance(device_config, "image_upload", "Copy").settings
+            if route == "/add_plugin"
+            else refresh_task.actions[0].plugin_settings
+        )
+        assert settings["imageFiles[]"] == ["/existing.png", str(saved / "new.png")]
+
     def test_delete(self, client, device_config):
         response = client.post(
             "/delete_plugin_instance",
