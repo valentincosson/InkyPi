@@ -10,7 +10,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 - **Transition :** la nouvelle interface vit sur `/ui/`, et `/` y mène. Les anciennes pages restent à leurs adresses (`/playlist`, `/settings`, `/api-keys`, `/plugin/<id>`), hormis l'ancienne page d'accueil, qui n'est plus servie : son gabarit `src/templates/inky.html` reste en place pour simplifier la récupération d'upstream.
 - **Formulaires de plugins :** une description par plugin dans `src/ui/`, rendue par un moteur générique. Un plugin sans description ouvre l'ancienne page.
 - **Langue :** anglais par défaut, interface traduisible.
-- **Design :** interface sobre, thèmes Graphite (clair) et Nuit (sombre), navigation en haut, vignettes en mini-illustrations grises, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
+- **Design :** interface sobre, thèmes clair et sombre de même teinte bleu indigo, navigation en haut, vignettes en mini-illustrations sobres, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
 - **Validation :** sur Mac uniquement, avec l'écran simulé.
 
 ## Lots

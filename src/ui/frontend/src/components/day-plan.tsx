@@ -12,7 +12,7 @@ function Bar({ ranges, className }: { ranges: Range[]; className: string }) {
 }
 
 function NowLine({ minutes }: { minutes: number }) {
-  return <span className="absolute -inset-y-1 w-0.5 -translate-x-1/2 bg-[var(--ring)] shadow-[0_0_0_1px_var(--card)]" style={{ left: `${(minutes / DAY_MINUTES) * 100}%` }} />
+  return <span className="absolute -inset-y-1 w-0.5 -translate-x-1/2 bg-foreground shadow-[0_0_0_1px_var(--card)]" style={{ left: `${(minutes / DAY_MINUTES) * 100}%` }} />
 }
 
 function Note({ children }: { children: string }) {
@@ -83,7 +83,7 @@ export function DayPlan({ data, minutes }: { data: PlaylistsData; minutes: numbe
           <li className="flex items-center gap-1.5"><span className="h-2.5 w-4 rounded-[2px] bg-primary" />{t("playlists.legendShown")}</li>
           {hasOverlap ? <li className="flex items-center gap-1.5"><span className="track-hidden h-2.5 w-4 rounded-[2px]" />{t("playlists.legendHidden")}</li> : null}
           {frozen.length ? <li className="flex items-center gap-1.5"><span className="h-2.5 w-4 rounded-[2px] border border-primary" />{t("playlists.legendEmpty")}</li> : null}
-          <li className="flex items-center gap-1.5 tabular-nums"><span className="h-3 w-0.5 bg-[var(--ring)]" />{t("playlists.legendNow", { time: clock(`${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`) })}</li>
+          <li className="flex items-center gap-1.5 tabular-nums"><span className="h-3 w-0.5 bg-foreground" />{t("playlists.legendNow", { time: clock(`${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`) })}</li>
         </ul>
       </div>
       {hasOverlap ? <p className="mt-3 text-sm text-muted-foreground">{t("playlists.overlap")}</p> : null}

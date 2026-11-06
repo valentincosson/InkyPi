@@ -12,19 +12,19 @@ Référence visuelle de l'interface.
 
 ## Thèmes
 
-Clair ou sombre selon le système, avec une bascule. Le choix est conservé sous la clé existante `inkypi-theme`.
+Clair ou sombre selon le système, avec une bascule. Le choix est conservé sous la clé existante `inkypi-theme`. Les deux thèmes partagent la même teinte bleu indigo, dans les neutres comme dans l'action principale.
 
 | Rôle | Clair | Sombre |
 |---|---|---|
-| Fond | `#fafafa` | `#111318` |
+| Fond | `#f3f5fb` | `#111318` |
 | Surface | `#ffffff` | `#191c23` |
-| Texte | `#18181b` | `#eceef2` |
-| Texte secondaire | `#5f5f68` | `#a4aab6` |
-| Action principale | `#18181b` | `#a9b8ff` |
-| Filet | `#e4e4e7` | `#2a2e39` |
-| Bordure de contrôle | `#d4d4d9` | `#3a3f4c` |
-| Bordure de champ | `#8e8e98` | `#7c8494` |
-| Focus | `#3f5bd9` | `#a9b8ff` |
+| Texte | `#171a23` | `#eceef2` |
+| Texte secondaire | `#555b6e` | `#a4aab6` |
+| Action principale | `#3d4eb8` | `#a9b8ff` |
+| Filet | `#dde1ee` | `#2a2e39` |
+| Bordure de contrôle | `#c9cfe0` | `#3a3f4c` |
+| Bordure de champ | `#858ca0` | `#7c8494` |
+| Focus | `#3d4eb8` | `#a9b8ff` |
 
 Les couleurs d'état sont réservées à leur rôle : ambre pour un avertissement, rouge pour une erreur ou une action destructive. Une action destructive reste un bouton à contour avec un texte rouge, et demande toujours confirmation.
 
@@ -44,7 +44,7 @@ Geist seule, hébergée localement. Corps en 15 px, contrôles en 14 px, titre d
 
 ## Illustrations
 
-Dessinées en SVG avec quatre niveaux de gris (`--art-bg`, `--art-1`, `--art-2`, `--art-ink`), un trait de 3 unités sur une base de 200×120 et un fond unique. Ne jamais les obtenir par un filtre sur des dessins en couleur.
+Dessinées en SVG avec quatre niveaux d'ardoise (`--art-bg`, `--art-1`, `--art-2`, `--art-ink`), un trait de 3 unités sur une base de 200×120 et un fond unique. Ne jamais les obtenir par un filtre sur des dessins en couleur.
 
 ## Aperçu
 
