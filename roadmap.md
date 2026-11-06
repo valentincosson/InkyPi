@@ -38,6 +38,13 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 
 `src/ui/frontend/src/forms/contract.test.ts` compare chaque description aux captures et à son `settings.html` : un champ ajouté par upstream fait échouer ce test, et un réglage inconnu de la description repart tel quel à l'enregistrement. Les lignes dynamiques et les fichiers sont couverts par `tests/test_ui_plugin_forms.py`.
 
+## Décisions à prendre
+
+Rien n'est encore implémenté. Ces deux choix sont à trancher de préférence après un test sur le Pi, car seuls l'écran réel et l'appareil montrent le rendu et le coût. Si l'un des choix change l'aperçu ou le tramage, la section Aperçu de `DESIGN.md` sera à mettre à jour.
+
+- **Tramage sur un écran Inky :** il reste actif sur l'écran réel, appliqué par la bibliothèque dans `set_image`. Il est utile pour les photos et les dégradés, mais gêne le texte et les aplats. Il peut être évité dans `src/display/inky_display.py`, sans toucher à la bibliothèque ni aux plugins, en convertissant l'image en mode `P` avec la palette de l'écran juste avant `set_image`. Une image RVB aux couleurs pures serait tramée quand même, et la conversion dépend du pilote : un nombre de couleurs exact (six ou quatre), ou des indices dans l'ordre du pilote. Deux options : un réglage **Dithering** dans Settings, désactivé par défaut (recommandé), ou une désactivation partout, sans réglage. À vérifier sur l'écran, car le Mac ne peut que simuler la réduction des couleurs. Les écrans Waveshare ont leur propre tramage, à traiter à part.
+- **Aperçu automatique :** garder le bouton seul, ou ajouter un aperçu rapide sur Countdown, To-do List et Year Progress, en gardant le bouton partout. Le Pi remplirait le gabarit HTML sans lancer Chromium, et le navigateur le dessinerait dans une iframe de 800×480. Il faudrait réécrire les chemins des feuilles de style, des polices et des images, lus aujourd'hui sur le disque, et laisser s'exécuter le script de To-do List. Clock, dessiné sans gabarit, pourrait recevoir un aperçu rapide sous forme d'image. Les autres plugins garderaient le bouton seul, car ils appellent un service ou ne passent pas par ce gabarit. Le coût sur un Pi Zero 2 reste à mesurer, car le serveur ne traite qu'une requête à la fois.
+
 ## À reprendre
 
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
