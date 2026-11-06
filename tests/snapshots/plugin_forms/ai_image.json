@@ -1,0 +1,123 @@
+{
+  "defaults": [
+    [
+      "textPrompt",
+      ""
+    ],
+    [
+      "imageModel",
+      "gpt-image-1"
+    ],
+    [
+      "quality",
+      "medium"
+    ],
+    [
+      "plugin_id",
+      "ai_image"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "textPrompt",
+      "sample textPrompt"
+    ],
+    [
+      "imageModel",
+      "gpt-image-2"
+    ],
+    [
+      "quality",
+      "low"
+    ],
+    [
+      "randomizePrompt",
+      "false"
+    ],
+    [
+      "plugin_id",
+      "ai_image"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "textPrompt",
+        "sample textPrompt"
+      ],
+      [
+        "imageModel",
+        "gpt-image-2"
+      ],
+      [
+        "quality",
+        "low"
+      ],
+      [
+        "randomizePrompt",
+        "false"
+      ],
+      [
+        "plugin_id",
+        "ai_image"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "textPrompt",
+      "sample textPrompt"
+    ],
+    [
+      "imageModel",
+      "gpt-image-2"
+    ],
+    [
+      "quality",
+      "low"
+    ],
+    [
+      "randomizePrompt",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "ai_image"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "imageModel": "gpt-image-2",
+    "quality": "low",
+    "randomizePrompt": "true",
+    "textPrompt": "sample textPrompt"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "textPrompt",
+        "sample textPrompt"
+      ],
+      [
+        "imageModel",
+        "gpt-image-2"
+      ],
+      [
+        "quality",
+        "low"
+      ],
+      [
+        "randomizePrompt",
+        "true"
+      ],
+      [
+        "plugin_id",
+        "ai_image"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

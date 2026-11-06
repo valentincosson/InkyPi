@@ -9,6 +9,23 @@ import logging
 logger = logging.getLogger(__name__)
 plugin_bp = Blueprint("plugin", __name__)
 
+def _settings_without_shared_files(device_config, plugin_instance_obj):
+    """A copy of an instance points at the same files: only clean up what no other instance uses."""
+    others = [
+        other.settings
+        for playlist in device_config.get_playlist_manager().playlists
+        for other in playlist.plugins
+        if other is not plugin_instance_obj and other.plugin_id == plugin_instance_obj.plugin_id
+    ]
+
+    def still_used(key, item):
+        return any(isinstance(settings.get(key), list) and item in settings[key] for settings in others)
+
+    return {
+        key: [item for item in value if not still_used(key, item)] if isinstance(value, list) else value
+        for key, value in plugin_instance_obj.settings.items()
+    }
+
 def _delete_plugin_instance_images(device_config, plugin_instance_obj):
     """Delete all images associated with a plugin instance."""
     # Delete the plugin instance's generated image
@@ -25,7 +42,7 @@ def _delete_plugin_instance_images(device_config, plugin_instance_obj):
         plugin_config = device_config.get_plugin(plugin_instance_obj.plugin_id)
         if plugin_config:
             plugin = get_plugin_instance(plugin_config)
-            plugin.cleanup(plugin_instance_obj.settings)
+            plugin.cleanup(_settings_without_shared_files(device_config, plugin_instance_obj))
     except Exception as e:
         logger.warning(f"Error during plugin cleanup for {plugin_instance_obj.plugin_id}: {e}")
 
@@ -234,7 +251,7 @@ def update_now():
 
     try:
         plugin_settings = parse_form(request.form)
-        plugin_settings.update(handle_request_files(request.files))
+        plugin_settings.update(handle_request_files(request.files, request.form))
         plugin_id = plugin_settings.pop("plugin_id")
 
         # Check if refresh task is running

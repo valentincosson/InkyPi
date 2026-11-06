@@ -7,8 +7,22 @@ import hashlib
 import tempfile
 import subprocess
 import shutil
+from contextlib import contextmanager
+from contextvars import ContextVar
 
 logger = logging.getLogger(__name__)
+
+# Propre au thread qui la pose : un rendu du moteur reste à la taille de l'écran.
+_screenshot_scale = ContextVar("screenshot_scale", default=1)
+
+@contextmanager
+def screenshot_scale(scale):
+    """Renders HTML at a higher pixel density inside this block, with the same layout."""
+    token = _screenshot_scale.set(scale)
+    try:
+        yield
+    finally:
+        _screenshot_scale.reset(token)
 
 def get_image(image_url):
     response = requests.get(image_url, timeout=30)
@@ -152,11 +166,19 @@ def take_screenshot(target, dimensions, timeout_ms=None):
         ]
         if timeout_ms:
             command.append(f"--timeout={timeout_ms}")
+        scale = _screenshot_scale.get()
+        if scale > 1:
+            command.append(f"--force-device-scale-factor={scale}")
         result = subprocess.run(command, capture_output=True, check=False)
 
         # Check if the process failed or the output file is missing
         if result.returncode != 0 or not os.path.exists(img_file_path):
             logger.error(f"Failed to take screenshot (return code: {result.returncode})")
+            if scale > 1:
+                if os.path.exists(img_file_path):
+                    os.remove(img_file_path)
+                with screenshot_scale(1):
+                    return take_screenshot(target, dimensions, timeout_ms)
             return None
 
         # Load the image using PIL

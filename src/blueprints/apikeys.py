@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app, render_template
 from dotenv import dotenv_values
+from config import write_file_atomically
 import os
 import re
 import logging
@@ -27,17 +28,24 @@ def parse_env_file(filepath):
         return []
 
 
+def format_env_value(value):
+    """Quote a value when needed, so that dotenv reads it back unchanged."""
+    if any(character in value for character in ' \t\n"\''):
+        escaped = value.replace('\\', '\\\\').replace('"', '\\"')
+        return f'"{escaped}"'
+    return value
+
+
 def write_env_file(filepath, entries):
-    """Write entries to .env file."""
+    """Write entries to .env file in one step: a failure leaves the existing keys in place."""
+    def write(f):
+        f.write("# InkyPi API Keys and Secrets\n")
+        f.write("# Managed via web interface\n\n")
+        for key, value in entries:
+            f.write(f"{key}={format_env_value(value)}\n")
+
     try:
-        with open(filepath, 'w') as f:
-            f.write("# InkyPi API Keys and Secrets\n")
-            f.write("# Managed via web interface\n\n")
-            for key, value in entries:
-                # Quote values with spaces or special characters
-                if ' ' in value or '"' in value or "'" in value:
-                    value = f'"{value}"'
-                f.write(f"{key}={value}\n")
+        write_file_atomically(filepath, write)
         return True
     except Exception as e:
         logger.error(f"Error writing .env file: {e}")
@@ -96,7 +104,7 @@ def save_apikeys():
             
             if keep_existing:
                 # Use existing value from .env file
-                value = existing_values.get(key, '')
+                value = existing_values.get(key) or ''
             else:
                 # Use provided value
                 value = entry.get('value', '').strip()
@@ -107,7 +115,10 @@ def save_apikeys():
             # Reload environment variables
             for key, value in valid_entries:
                 os.environ[key] = value
-            
+            # A removed key must stop working right away, not at the next restart
+            for key in existing_values.keys() - {key for key, _ in valid_entries}:
+                os.environ.pop(key, None)
+
             return jsonify({
                 "success": True,
                 "message": f"Saved {len(valid_entries)} API key(s). Some plugins may require restart to pick up changes."

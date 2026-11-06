@@ -141,3 +141,47 @@ Different platforms have different available browser packages, refer to the reco
 | Windows | Chromium or Google Chrome | devbox method installs chromium on WSL2,<br>if using native Windows (not devbox via WSL2), chromium or google-chrome should also work if in PATH | 
 
 InkyPi will search for a Chrome-like browser in the project's PATH (if using devbox method) and your system's PATH in that order. 
+
+
+## Quick start script
+
+`scripts/dev.sh` prepares everything and starts the server on http://localhost:8080. It requires `uv` or Python 3.12, works without devbox, and is the simplest option on macOS:
+
+- creates `.venv` and installs the dependencies, then downloads the vendor JS files if needed;
+- makes Google Chrome available to the HTML renderer;
+- keeps its configuration in `.dev/device.json`, so `src/config/device_dev.json` stays untouched;
+- neutralises the `sudo` commands behind the Reboot and Shutdown buttons.
+
+To start over with a clean configuration, delete `.dev/device.json`.
+
+**Warning:** with any other setup, including `python src/inkypi.py --dev`, the Reboot and Shutdown buttons run the real `sudo reboot` and `sudo shutdown -h now` on your machine.
+
+## Running the tests
+
+```bash
+.venv/bin/python -m pytest
+```
+
+`tests/test_plugin_forms.py` drives every plugin form in Google Chrome, and is skipped if Playwright or Chrome is missing. If a form changes on purpose, refresh its reference with `UPDATE_PLUGIN_FORM_SNAPSHOTS=1`.
+
+## New interface
+
+The new interface lives in `src/ui/frontend/` and is served on http://localhost:8080/ui/, where `/` also leads, from the compiled files in `src/ui/static/bundle/`. Those files are committed, so the Raspberry Pi never needs Node.
+
+```bash
+cd src/ui/frontend
+npm ci
+npm run dev    # hot reload on http://localhost:5173/ui/, with scripts/dev.sh running for the data
+npm test
+npm run build  # required before committing: a test fails if the bundle no longer matches the sources
+```
+
+Do not name a folder `lib`, `dist` or `build` in there: the root `.gitignore` would silently ignore it.
+
+### Plugin forms
+
+Each plugin form is described in `src/ui/frontend/src/forms/definitions.ts` and rendered by a shared engine. A plugin without a description keeps its old page. After changing what a plugin's `settings.html` or `generate_settings_template` offers, update its description; `npm test` compares every description with `settings.html` and with the references in `tests/snapshots/`. To refresh those references:
+
+```bash
+UPDATE_PLUGIN_FORM_SNAPSHOTS=1 pytest tests/test_plugin_forms.py tests/test_ui.py
+```

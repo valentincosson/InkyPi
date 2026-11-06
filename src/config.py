@@ -1,10 +1,37 @@
+import contextlib
 import os
 import json
 import logging
+import stat
+import tempfile
 from dotenv import load_dotenv
 from model import PlaylistManager, RefreshInfo
 
 logger = logging.getLogger(__name__)
+
+def write_file_atomically(path, write):
+    """Replaces a file in one step, so an interrupted write cannot corrupt it."""
+    target = os.path.realpath(path)
+    directory, name = os.path.split(target)
+    file_descriptor, temp_path = tempfile.mkstemp(dir=directory, prefix=f".{name}.", suffix=".tmp")
+    try:
+        with os.fdopen(file_descriptor, 'w') as outfile:
+            write(outfile)
+            outfile.flush()
+            os.fsync(outfile.fileno())
+        if os.path.exists(target):
+            current = os.stat(target)
+            os.chmod(temp_path, stat.S_IMODE(current.st_mode))
+            if hasattr(os, "chown"):
+                try:
+                    os.chown(temp_path, current.st_uid, current.st_gid)
+                except PermissionError:
+                    logger.warning(f"Could not keep the owner of {target}")
+        os.replace(temp_path, target)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.remove(temp_path)
+        raise
 
 class Config:
     # Base path for the project directory
@@ -57,8 +84,10 @@ class Config:
         logger.debug(f"Writing device config to {self.config_file}")
         self.update_value("playlist_config", self.playlist_manager.to_dict())
         self.update_value("refresh_info", self.refresh_info.to_dict())
-        with open(self.config_file, 'w') as outfile:
-            json.dump(self.config, outfile, indent=4)
+        self._write_file_atomically()
+
+    def _write_file_atomically(self):
+        write_file_atomically(self.config_file, lambda outfile: json.dump(self.config, outfile, indent=4))
 
     def get_config(self, key=None, default={}):
         """Gets the value of a specific configuration key or returns the entire config if none provided."""

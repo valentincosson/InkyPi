@@ -30,6 +30,7 @@ from blueprints.settings import settings_bp
 from blueprints.plugin import plugin_bp
 from blueprints.playlist import playlist_bp
 from blueprints.apikeys import apikeys_bp
+from ui.blueprint import ui_bp
 from jinja2 import ChoiceLoader, FileSystemLoader
 from plugins.plugin_registry import load_plugins
 from waitress import serve
@@ -44,7 +45,7 @@ args = parser.parse_args()
 
 # Set development mode settings
 if args.dev:
-    Config.config_file = os.path.join(Config.BASE_DIR, "config", "device_dev.json")
+    Config.config_file = os.getenv("INKYPI_DEV_CONFIG") or os.path.join(Config.BASE_DIR, "config", "device_dev.json")
     DEV_MODE = True
     PORT = 8080
     logger.info("Starting InkyPi in DEVELOPMENT mode on port 8080")
@@ -80,6 +81,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(plugin_bp)
 app.register_blueprint(playlist_bp)
 app.register_blueprint(apikeys_bp)
+app.register_blueprint(ui_bp)
 
 # Register opener for HEIF/HEIC images
 register_heif_opener()

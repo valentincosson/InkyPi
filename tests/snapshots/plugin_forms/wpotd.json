@@ -1,0 +1,68 @@
+{
+  "defaults": [
+    [
+      "customDate",
+      ""
+    ],
+    [
+      "shrinkToFitWpotd",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "wpotd"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "randomizeWpotd",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "wpotd"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "randomizeWpotd",
+        "true"
+      ],
+      [
+        "plugin_id",
+        "wpotd"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "randomizeWpotd",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "wpotd"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "randomizeWpotd": "true"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "randomizeWpotd",
+        "true"
+      ],
+      [
+        "plugin_id",
+        "wpotd"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

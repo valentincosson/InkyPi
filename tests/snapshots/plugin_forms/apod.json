@@ -1,0 +1,64 @@
+{
+  "defaults": [
+    [
+      "customDate",
+      "2030-01-15"
+    ],
+    [
+      "plugin_id",
+      "apod"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "randomizeApod",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "apod"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "randomizeApod",
+        "true"
+      ],
+      [
+        "plugin_id",
+        "apod"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "randomizeApod",
+      "true"
+    ],
+    [
+      "plugin_id",
+      "apod"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "randomizeApod": "true"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "randomizeApod",
+        "true"
+      ],
+      [
+        "plugin_id",
+        "apod"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

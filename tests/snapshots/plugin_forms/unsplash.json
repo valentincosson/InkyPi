@@ -1,0 +1,148 @@
+{
+  "defaults": [
+    [
+      "search_query",
+      ""
+    ],
+    [
+      "collections",
+      ""
+    ],
+    [
+      "content_filter",
+      "low"
+    ],
+    [
+      "color",
+      ""
+    ],
+    [
+      "orientation",
+      ""
+    ],
+    [
+      "plugin_id",
+      "unsplash"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "search_query",
+      "sample search_query"
+    ],
+    [
+      "collections",
+      "sample collections"
+    ],
+    [
+      "content_filter",
+      "high"
+    ],
+    [
+      "color",
+      "blue"
+    ],
+    [
+      "orientation",
+      "portrait"
+    ],
+    [
+      "plugin_id",
+      "unsplash"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "search_query",
+        "sample search_query"
+      ],
+      [
+        "collections",
+        "sample collections"
+      ],
+      [
+        "content_filter",
+        "high"
+      ],
+      [
+        "color",
+        "blue"
+      ],
+      [
+        "orientation",
+        "portrait"
+      ],
+      [
+        "plugin_id",
+        "unsplash"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "search_query",
+      "sample search_query"
+    ],
+    [
+      "collections",
+      "sample collections"
+    ],
+    [
+      "content_filter",
+      "high"
+    ],
+    [
+      "color",
+      "blue"
+    ],
+    [
+      "orientation",
+      "portrait"
+    ],
+    [
+      "plugin_id",
+      "unsplash"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "collections": "sample collections",
+    "color": "blue",
+    "content_filter": "high",
+    "orientation": "portrait",
+    "search_query": "sample search_query"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "search_query",
+        "sample search_query"
+      ],
+      [
+        "collections",
+        "sample collections"
+      ],
+      [
+        "content_filter",
+        "high"
+      ],
+      [
+        "color",
+        "blue"
+      ],
+      [
+        "orientation",
+        "portrait"
+      ],
+      [
+        "plugin_id",
+        "unsplash"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

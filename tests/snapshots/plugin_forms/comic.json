@@ -1,0 +1,89 @@
+{
+  "defaults": [
+    [
+      "comic",
+      "XKCD"
+    ],
+    [
+      "titleCaption",
+      "true"
+    ],
+    [
+      "fontSize",
+      "14"
+    ],
+    [
+      "plugin_id",
+      "comic"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "comic",
+      "webcomic name"
+    ],
+    [
+      "fontSize",
+      "20"
+    ],
+    [
+      "plugin_id",
+      "comic"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "comic",
+        "webcomic name"
+      ],
+      [
+        "fontSize",
+        "20"
+      ],
+      [
+        "plugin_id",
+        "comic"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "comic",
+      "webcomic name"
+    ],
+    [
+      "fontSize",
+      "20"
+    ],
+    [
+      "plugin_id",
+      "comic"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "comic": "webcomic name",
+    "fontSize": "20"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "comic",
+        "webcomic name"
+      ],
+      [
+        "fontSize",
+        "20"
+      ],
+      [
+        "plugin_id",
+        "comic"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

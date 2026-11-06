@@ -172,3 +172,12 @@ mock_display_output/
 # Static Files added by install/update_vendors.sh
 /src/static/scripts/
 /src/static/styles/
+
+# Données locales d'une installation, à conserver lors des mises à jour
+/src/config/device.json
+/src/config/*.tmp
+/..env.*.tmp
+/src/static/images/current_image.png
+
+# Environnement de développement local
+/.dev/

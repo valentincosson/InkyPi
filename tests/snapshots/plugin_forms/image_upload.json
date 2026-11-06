@@ -1,0 +1,170 @@
+{
+  "defaults": [
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "blur"
+    ],
+    [
+      "backgroundColor",
+      "#ffffff"
+    ],
+    [
+      "imageFiles[]",
+      "file:"
+    ],
+    [
+      "plugin_id",
+      "image_upload"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "randomize",
+      "false"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "imageFiles[]",
+      "file:"
+    ],
+    [
+      "imageFiles[]",
+      "file:"
+    ],
+    [
+      "plugin_id",
+      "image_upload"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "randomize",
+        "false"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "imageFiles[]",
+        "file:"
+      ],
+      [
+        "imageFiles[]",
+        "file:"
+      ],
+      [
+        "plugin_id",
+        "image_upload"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "padImage",
+      "false"
+    ],
+    [
+      "padImage",
+      "true"
+    ],
+    [
+      "randomize",
+      "true"
+    ],
+    [
+      "backgroundOption",
+      "color"
+    ],
+    [
+      "backgroundColor",
+      "#123456"
+    ],
+    [
+      "imageFiles[]",
+      "file:"
+    ],
+    [
+      "plugin_id",
+      "image_upload"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "backgroundColor": "#123456",
+    "backgroundOption": "color",
+    "imageFiles[]": [
+      "file:"
+    ],
+    "padImage": "false",
+    "randomize": "true"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "padImage",
+        "false"
+      ],
+      [
+        "padImage",
+        "true"
+      ],
+      [
+        "randomize",
+        "true"
+      ],
+      [
+        "backgroundOption",
+        "color"
+      ],
+      [
+        "backgroundColor",
+        "#123456"
+      ],
+      [
+        "imageFiles[]",
+        "file:"
+      ],
+      [
+        "plugin_id",
+        "image_upload"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

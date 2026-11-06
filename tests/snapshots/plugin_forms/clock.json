@@ -1,0 +1,106 @@
+{
+  "defaults": [
+    [
+      "selectedClockFace",
+      "Gradient Clock"
+    ],
+    [
+      "primaryColor",
+      "#db3246"
+    ],
+    [
+      "secondaryColor",
+      "#000000"
+    ],
+    [
+      "plugin_id",
+      "clock"
+    ]
+  ],
+  "edit_prefilled": [
+    [
+      "selectedClockFace",
+      "Gradient Clock"
+    ],
+    [
+      "primaryColor",
+      "#123456"
+    ],
+    [
+      "secondaryColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "clock"
+    ]
+  ],
+  "edit_save_request": {
+    "fields": [
+      [
+        "selectedClockFace",
+        "Gradient Clock"
+      ],
+      [
+        "primaryColor",
+        "#123456"
+      ],
+      [
+        "secondaryColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "clock"
+      ]
+    ],
+    "method": "PUT",
+    "url": "/update_plugin_instance/Snapshot"
+  },
+  "filled": [
+    [
+      "selectedClockFace",
+      "Gradient Clock"
+    ],
+    [
+      "primaryColor",
+      "#123456"
+    ],
+    [
+      "secondaryColor",
+      "#123456"
+    ],
+    [
+      "plugin_id",
+      "clock"
+    ]
+  ],
+  "page_errors": [],
+  "stored_settings": {
+    "primaryColor": "#123456",
+    "secondaryColor": "#123456",
+    "selectedClockFace": "Gradient Clock"
+  },
+  "update_now_request": {
+    "fields": [
+      [
+        "selectedClockFace",
+        "Gradient Clock"
+      ],
+      [
+        "primaryColor",
+        "#123456"
+      ],
+      [
+        "secondaryColor",
+        "#123456"
+      ],
+      [
+        "plugin_id",
+        "clock"
+      ]
+    ],
+    "method": "POST",
+    "url": "/update_now"
+  }
+}

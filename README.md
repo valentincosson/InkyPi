@@ -132,6 +132,10 @@ This project has been tested with several Waveshare models. **Displays based on 
 
 If your display model has a corresponding driver in the link above, it’s likely to be compatible. When running the installation script, use the -W option to specify your display model (without the .py extension). The script will automatically fetch and install the correct driver.
 
+## This fork
+
+This is a modified version of [InkyPi](https://github.com/fatihak/InkyPi) by fatihak, with a new web interface in progress. See [NOTICE.md](./NOTICE.md) for the changes and [roadmap.md](./roadmap.md) for the plan.
+
 ## License
 
 Distributed under the GPL 3.0 License, see [LICENSE](./LICENSE) for more information.

@@ -75,3 +75,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
+
+## New web interface
+The interface in `src/ui/` ships the components below and their dependencies. The full list, with the licence texts, is in [THIRD_PARTY_LICENSES.txt](../src/ui/static/bundle/THIRD_PARTY_LICENSES.txt).
+
+| Name | License |
+|---|---|
+| [React](https://react.dev) | MIT |
+| [Base UI](https://base-ui.com) | MIT |
+| [shadcn/ui](https://ui.shadcn.com) components, copied into `src/ui/frontend/src/components/ui/` | MIT |
+| [Tailwind CSS](https://tailwindcss.com) | MIT |
+| [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) | MIT |
+| [class-variance-authority](https://cva.style) | Apache-2.0 |
+| [cn](https://github.com/shadcn-ui/cn) utility | MIT |
+| [Lucide](https://lucide.dev) icons | ISC |
+| [wouter](https://github.com/molefrog/wouter) | Unlicense |
+| [Geist](https://vercel.com/font) font, packaged by [Fontsource](https://fontsource.org) | SIL OFL v1.1 |
+| [Leaflet](https://leafletjs.com), loaded only when the map opens | BSD-2-Clause |
+
+The Weather form also uses two online services, called from the browser and not from the device:
+
+- City search: [Open-Meteo](https://open-meteo.com/) geocoding, based on [GeoNames](https://www.geonames.org/) data (CC BY 4.0). Its free API is for non-commercial use.
+- Map: tiles by [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL), shown only while the map is open.
+
+Both sources are credited in the form itself.
