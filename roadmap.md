@@ -11,7 +11,8 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 - **Formulaires de plugins :** une description par plugin dans `src/ui/`, rendue par un moteur générique. Un plugin sans description ouvre l'ancienne page.
 - **Langue :** anglais par défaut, interface traduisible.
 - **Design :** interface sobre, thèmes clair et sombre de même teinte bleu indigo, navigation en haut, vignettes en mini-illustrations sobres, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
-- **Validation :** sur Mac uniquement, avec l'écran simulé.
+- **Validation :** sur Mac avec l'écran simulé, sauf l'essai de tramage sur un écran Spectra 6 réel.
+- **Tramage :** celui de la bibliothèque Inky reste tel quel. Un essai côte à côte sur un écran Spectra 6, avec un tramage limité aux zones qui en ont besoin, n'a pas montré de différence assez nette pour modifier le moteur.
 
 ## Lots
 
@@ -37,13 +38,6 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 - **`image_album` :** `updateTitleOptions` est appelée mais n'est définie nulle part.
 
 `src/ui/frontend/src/forms/contract.test.ts` compare chaque description aux captures et à son `settings.html` : un champ ajouté par upstream fait échouer ce test, et un réglage inconnu de la description repart tel quel à l'enregistrement. Les lignes dynamiques et les fichiers sont couverts par `tests/test_ui_plugin_forms.py`.
-
-## Décisions à prendre
-
-Rien n'est encore implémenté. Ces deux choix sont à trancher de préférence après un test sur le Pi, car seuls l'écran réel et l'appareil montrent le rendu et le coût. Si l'un des choix change l'aperçu ou le tramage, la section Aperçu de `DESIGN.md` sera à mettre à jour.
-
-- **Tramage sur un écran Inky :** il reste actif sur l'écran réel, appliqué par la bibliothèque dans `set_image`. Il est utile pour les photos et les dégradés, mais gêne le texte et les aplats. Il peut être évité dans `src/display/inky_display.py`, sans toucher à la bibliothèque ni aux plugins, en convertissant l'image en mode `P` avec la palette de l'écran juste avant `set_image`. Une image RVB aux couleurs pures serait tramée quand même, et la conversion dépend du pilote : un nombre de couleurs exact (six ou quatre), ou des indices dans l'ordre du pilote. Deux options : un réglage **Dithering** dans Settings, désactivé par défaut (recommandé), ou une désactivation partout, sans réglage. À vérifier sur l'écran, car le Mac ne peut que simuler la réduction des couleurs. Les écrans Waveshare ont leur propre tramage, à traiter à part.
-- **Aperçu automatique :** garder le bouton seul, ou ajouter un aperçu rapide sur Countdown, To-do List et Year Progress, en gardant le bouton partout. Le Pi remplirait le gabarit HTML sans lancer Chromium, et le navigateur le dessinerait dans une iframe de 800×480. Il faudrait réécrire les chemins des feuilles de style, des polices et des images, lus aujourd'hui sur le disque, et laisser s'exécuter le script de To-do List. Clock, dessiné sans gabarit, pourrait recevoir un aperçu rapide sous forme d'image. Les autres plugins garderaient le bouton seul, car ils appellent un service ou ne passent pas par ce gabarit. Le coût sur un Pi Zero 2 reste à mesurer, car le serveur ne traite qu'une requête à la fois.
 
 ## À reprendre
 
@@ -85,7 +79,9 @@ Rien n'est encore implémenté. Ces deux choix sont à trancher de préférence 
 
 ## Plus tard
 
-- **Écran personnalisé :** choisir entre des zones remplies par des plugins existants, des éléments libres, ou les deux. Un essai sur Mac a assemblé trois plugins en zones sans modifier le moteur, mais certains plugins débordent à petite taille et le coût de rendu sur un Pi Zero 2 reste inconnu.
+- **Écran personnalisé :** composer son écran par glisser-déposer, en choisissant entre des zones remplies par des plugins existants, des éléments libres, ou les deux. Un essai sur Mac a assemblé trois plugins en zones sans modifier le moteur, mais certains plugins débordent à petite taille et le coût de rendu sur un Pi Zero 2 reste inconnu.
+- **Aperçu automatique :** ajouter un aperçu rapide sur Countdown, To-do List et Year Progress, en gardant le bouton partout. Le Pi remplirait le gabarit HTML sans lancer Chromium, et le navigateur le dessinerait dans une iframe de 800×480. Il faudrait réécrire les chemins des feuilles de style, des polices et des images, lus aujourd'hui sur le disque, et laisser s'exécuter le script de To-do List. Clock, dessiné sans gabarit, pourrait recevoir un aperçu rapide sous forme d'image. Les autres plugins garderaient le bouton seul, car ils appellent un service ou ne passent pas par ce gabarit. Le coût sur un Pi Zero 2 reste à mesurer, car le serveur ne traite qu'une requête à la fois. S'il est retenu, la section Aperçu de `DESIGN.md` sera à mettre à jour.
+- **Aperçu avec ou sans tramage :** pouvoir basculer l'aperçu entre la belle version et une version tramée. Cette dernière montrerait où tombent les points, en 800×480 et sans lissage à l'affichage, mais pas les vraies couleurs de l'encre. Le tramage devrait reprendre la palette du pilote, et la bibliothèque Inky n'est installée que sur le Pi. S'il est retenu, la section Aperçu de `DESIGN.md` sera à mettre à jour.
 - **Serveur à plusieurs threads :** aujourd'hui, un rendu bloque toute l'interface (`src/inkypi.py`, `threads=1`). Le changement touche au cœur et demande un test sur le Pi.
 - **Protection de `/shutdown` et de l'interface :** aucune authentification, et le serveur écoute sur tout le réseau local. Les routes d'origine et l'aperçu acceptent aussi un chemin de fichier dans le formulaire (`imageFiles[]`) : le plugin essaie de lire ce fichier sur l'appareil.
 - **Pi personnel :** faire pointer `origin` vers le fork.
