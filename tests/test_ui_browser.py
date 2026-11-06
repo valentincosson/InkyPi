@@ -64,6 +64,11 @@ def page(browser):
 
 @pytest.mark.browser
 class TestInBrowser:
+    def test_the_address_of_the_device_opens_the_new_interface(self, page, server_url):
+        page.goto(f"{server_url}/")
+        playwright_api.expect(page.get_by_role("navigation").get_by_role("link", name="Screen")).to_be_visible()
+        assert page.url == f"{server_url}/ui/"
+
     def test_explains_an_empty_screen(self, page, server_url, device_config):
         device_config.refresh_info = RefreshInfo(None, None, None, None)
         page.goto(f"{server_url}/ui/")
@@ -128,7 +133,7 @@ class TestInBrowser:
     def test_language_comes_from_the_catalogue(self, page, server_url):
         page.add_init_script("localStorage.setItem('inkypi-lang', 'fr')")
         page.goto(f"{server_url}/ui/")
-        playwright_api.expect(page.get_by_role("link", name="Réglages")).to_be_visible()
+        playwright_api.expect(page.get_by_role("navigation").get_by_role("link", name="Réglages")).to_be_visible()
         assert page.evaluate("document.documentElement.lang") == "fr"
 
     def test_theme_choice_is_kept_and_shared_with_the_old_interface(self, page, server_url):

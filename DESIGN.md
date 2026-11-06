@@ -1,6 +1,6 @@
 # Design d'InkyPi
 
-Référence visuelle de la nouvelle interface. Le code de la maquette se trouve dans `design/prototype/`.
+Référence visuelle de l'interface.
 
 ## Principes
 

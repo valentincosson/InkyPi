@@ -87,10 +87,17 @@ def test_route_map_is_stable(app):
 
 @pytest.mark.parametrize(
     "path",
-    ["/", "/playlist", "/settings", "/api-keys", "/plugin/clock?instance=Living room", "/plugin/countdown?instance=Holidays"],
+    ["/playlist", "/settings", "/api-keys", "/plugin/clock?instance=Living room", "/plugin/countdown?instance=Holidays"],
 )
 def test_pages_render(client, path):
     assert client.get(path).status_code == 200
+
+
+def test_the_home_page_leads_to_the_new_interface(client):
+    response = client.get("/")
+    # Pas de redirection permanente : un navigateur la garderait même si le projet revenait en arrière.
+    assert response.status_code == 302
+    assert response.headers["Location"] == "/ui/"
 
 
 def test_every_plugin_page_renders(client, device_config):

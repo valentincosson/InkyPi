@@ -81,7 +81,7 @@ class TestShell:
         assert ui_client.get("/ui/").status_code == 503
 
     def test_old_pages_stay_available(self, ui_client):
-        for path in ("/", "/playlist", "/settings", "/api-keys", "/plugin/clock"):
+        for path in ("/playlist", "/settings", "/api-keys", "/plugin/clock"):
             assert ui_client.get(path).status_code == 200, path
 
 

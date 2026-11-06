@@ -166,7 +166,7 @@ To start over with a clean configuration, delete `.dev/device.json`.
 
 ## New interface
 
-The new interface lives in `src/ui/frontend/` and is served on http://localhost:8080/ui/ from the compiled files in `src/ui/static/bundle/`. Those files are committed, so the Raspberry Pi never needs Node.
+The new interface lives in `src/ui/frontend/` and is served on http://localhost:8080/ui/, where `/` also leads, from the compiled files in `src/ui/static/bundle/`. Those files are committed, so the Raspberry Pi never needs Node.
 
 ```bash
 cd src/ui/frontend

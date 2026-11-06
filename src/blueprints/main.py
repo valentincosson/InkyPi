@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app, render_template, send_file
+from flask import Blueprint, request, jsonify, current_app, redirect, send_file
 import os
 from datetime import datetime
 
@@ -6,8 +6,7 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route('/')
 def main_page():
-    device_config = current_app.config['DEVICE_CONFIG']
-    return render_template('inky.html', config=device_config.get_config(), plugins=device_config.get_plugins())
+    return redirect('/ui/')
 
 @main_bp.route('/api/current_image')
 def get_current_image():

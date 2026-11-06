@@ -7,7 +7,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 - **Front :** une application React, avec Vite, shadcn, Base UI et Tailwind.
 - **Build :** Node reste sur la machine de développement. Le bundle compilé est versionné, et le Pi n'a besoin que de `git pull`.
 - **Emplacement :** tout le nouveau code vit dans `src/ui/`. `src/templates/`, le moteur et les dossiers de plugins restent intacts autant que possible.
-- **Transition :** la nouvelle interface vit sur `/ui/`, et l'ancienne reste à ses adresses habituelles. La page d'accueil `/` basculera sur demande, maintenant que les écrans principaux sont portés.
+- **Transition :** la nouvelle interface vit sur `/ui/`, et `/` y mène. Les anciennes pages restent à leurs adresses (`/playlist`, `/settings`, `/api-keys`, `/plugin/<id>`), hormis l'ancienne page d'accueil, qui n'est plus servie : son gabarit `src/templates/inky.html` reste en place pour simplifier la récupération d'upstream.
 - **Formulaires de plugins :** une description par plugin dans `src/ui/`, rendue par un moteur générique. Un plugin sans description ouvre l'ancienne page.
 - **Langue :** anglais par défaut, interface traduisible.
 - **Design :** interface sobre, thèmes Graphite (clair) et Nuit (sombre), navigation en haut, vignettes en mini-illustrations grises, bouton Update preview. Voir `DESIGN.md`. Chaque lot visuel repasse par une review `impeccable`.
@@ -25,6 +25,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | 5. Accueil | État réel de l'écran, à suivre, affichage du suivant, catalogue avec illustrations, recherche, tri | Terminé |
 | 6. Playlists | Page `/ui/playlists`, frise sur 24 h calculée par le moteur, priorité visible, réordonnancement, suppression, bugs corrigés | Terminé |
 | 7. Aperçu sans envoi à l'écran | Bouton Update preview, génération sans trace, état à jour ou périmé, dernière image d'une entrée | Terminé |
+| 8. Bascule | `/` mène à la nouvelle interface, maquette retirée | Terminé |
 
 ## Défauts relevés par la capture des formulaires
 
@@ -37,13 +38,13 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 
 `src/ui/frontend/src/forms/contract.test.ts` compare chaque description aux captures et à son `settings.html` : un champ ajouté par upstream fait échouer ce test, et un réglage inconnu de la description repart tel quel à l'enregistrement. Les lignes dynamiques et les fichiers sont couverts par `tests/test_ui_plugin_forms.py`.
 
-## À reprendre de la review de la maquette
+## À reprendre
 
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
 
 ## Limites connues de la transition
 
-- L'ancienne interface n'a aucun lien vers `/ui/` : y revenir passe par le bouton Retour du navigateur ou l'adresse. Le passage à `/` les supprimera.
+- Les anciennes pages n'ont aucun lien vers la nouvelle interface : leur bouton Back revient à la page précédente, et sinon il faut passer par l'adresse. Dans la nouvelle interface, seul un plugin sans description y mène encore.
 - Pendant un rendu, le serveur à un seul thread bloque aussi l'interface, fichiers statiques compris.
 - La langue choisie ne concerne que la nouvelle interface : l'ancienne reste en anglais.
 - La confirmation avant de quitter les réglages ne couvre pas le bouton Retour du navigateur à l'intérieur de la nouvelle interface. Les formulaires de plugins n'ont pas ce problème : ils gardent un brouillon, sauf pour les fichiers choisis.
