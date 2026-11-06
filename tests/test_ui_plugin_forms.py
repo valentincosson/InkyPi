@@ -375,6 +375,28 @@ class TestDrafts:
 
 
 class TestFields:
+    def test_the_other_colour_button_is_the_colour_field_itself(self, page, server_url):
+        """Certains navigateurs n'ouvrent le sélecteur que si le clic tombe sur le champ, partout sur le bouton."""
+        open_form(page, server_url, "year_progress")
+        field = page.get_by_label("Background colour: Other colour")
+        hits = field.evaluate("""input => {
+            const box = input.closest("label").getBoundingClientRect()
+            const points = [[.5, .5], [.2, .5], [.8, .5], [.5, .2], [.5, .8]]
+            return points.map(([x, y]) => document.elementFromPoint(box.x + box.width * x, box.y + box.height * y) === input)
+        }""")
+        assert all(hits)
+
+    def test_choosing_another_colour_replaces_the_plus(self, page, server_url, refresh_task):
+        open_form(page, server_url, "year_progress")
+        control = page.locator("label[title='Other colour']").first
+        expect(control.locator("svg")).to_have_count(1)
+        page.get_by_label("Background colour: Other colour").fill("#123456")
+        expect(control.locator("svg")).to_have_count(0)
+        expect(control.locator("span")).to_have_css("background-color", "rgb(18, 52, 86)")
+        press(page, "Show on screen")
+        expect(page.get_by_role("status").filter(has_text="On the screen")).to_be_visible()
+        assert "#123456" in refresh_task.actions[0].plugin_settings.values()
+
     def test_conditional_fields(self, page, server_url):
         open_form(page, server_url, "github")
         expect(page.get_by_label("Repository")).to_be_hidden()

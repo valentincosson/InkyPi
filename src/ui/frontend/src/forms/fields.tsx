@@ -80,7 +80,7 @@ function Inks({ name, label, value, onChange }: { name: string; label: string; v
           </label>
         ))}
         <label className="relative flex size-11 cursor-pointer items-center justify-center rounded-full has-focus-visible:outline-2 has-focus-visible:outline-[var(--ring)]" title={t("pf.color.other")}>
-          <input type="color" value={value} onChange={(event) => onChange(event.target.value)} className="absolute size-px opacity-0" aria-label={`${label}: ${t("pf.color.other")}`} />
+          <input type="color" value={value} onChange={(event) => onChange(event.target.value)} className="absolute inset-0 m-0 size-full cursor-pointer opacity-0" aria-label={`${label}: ${t("pf.color.other")}`} />
           <span className={`flex size-7 items-center justify-center rounded-full border border-dashed border-input text-muted-foreground ${custom ? selected : ""}`} style={custom ? { background: value } : undefined}>
             {custom ? null : <PlusIcon className="size-3.5" aria-hidden="true" />}
           </span>
