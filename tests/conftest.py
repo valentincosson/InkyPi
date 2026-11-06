@@ -2,6 +2,7 @@
 import copy
 import json
 import os
+import threading
 
 import pytest
 from flask import Flask
@@ -83,6 +84,7 @@ class FakeRefreshTask:
         self.running = True
         self.actions = []
         self.config_changes = 0
+        self.lock = threading.Lock()
 
     def manual_update(self, action):
         self.actions.append(action)

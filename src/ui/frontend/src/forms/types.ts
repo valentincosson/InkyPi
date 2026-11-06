@@ -48,6 +48,8 @@ export type Definition = {
   apiKey?: { key: string; when?: Condition }
   sections: Section[]
   notice?: Key
+  /** À savoir avant de demander un aperçu, quand il a un coût. */
+  previewNote?: Key
   /** Dernier ajustement avant l'envoi, pour les règles qui ne se décrivent pas autrement. */
   finalize?: (settings: Map<string, Sent[]>) => void
   validate?: (values: FormValues) => Errors

@@ -209,6 +209,11 @@ export function contrastRatio(first: string, second: string) {
   return (high + 0.05) / (low + 0.05)
 }
 
+/** Ce que le plugin recevrait : l'aperçu est périmé seulement si cela change, un champ masqué ne compte donc pas. */
+export function signatureOf(entries: [string, Sent][]) {
+  return JSON.stringify(entries.map(([name, value]) => [name, value instanceof File ? [value.name, value.size, value.lastModified] : value]))
+}
+
 /** Le brouillon ne garde que du texte : un fichier choisi ne peut pas être conservé par le navigateur. */
 export function toDraft(values: FormValues) {
   return JSON.stringify(values, (_, value: unknown) => (value instanceof File ? undefined : value))

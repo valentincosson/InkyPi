@@ -128,6 +128,9 @@ export type PluginData = {
   refresh: { interval?: number; scheduled?: string } | null
   playlists: string[]
   keys_set: string[]
+  /** `width` et `height` décrivent l'image telle qu'on la regarde, orientation comprise. */
+  device: { timezone: string; time_format: "12h" | "24h"; width: number; height: number }
+  saved_image: { url: string; refreshed_at: string } | null
 }
 
 export function getPlugin(id: string, instance: string | null, signal?: AbortSignal) {
@@ -140,6 +143,13 @@ function formBody(pluginId: string, entries: [string, string | File][]) {
   entries.forEach(([name, value]) => body.append(name, value))
   body.append("plugin_id", pluginId)
   return body
+}
+
+/** Génère une image sans rien envoyer à l'écran ni rien enregistrer. */
+export async function previewImage(pluginId: string, entries: [string, string | File][], signal?: AbortSignal) {
+  const response = await fetch("/ui/api/preview", { method: "POST", body: formBody(pluginId, entries), signal })
+  if (!response.ok) throw await errorFrom(response)
+  return response.blob()
 }
 
 /** Répond une fois l'image envoyée à l'écran : cela peut prendre longtemps sur le Pi. */

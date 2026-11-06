@@ -37,7 +37,7 @@ Geist seule, hébergée localement. Corps en 15 px, contrôles en 14 px, titre d
 - Navigation en haut, fixe à partir de 1024 px, jamais fixe sur mobile pour laisser la place au contenu. Sous 640 px, elle affiche le texte sans les icônes.
 - Contenu sur 1132 px au maximum, avec 20 px de marge, en grille de 4 colonnes avec 24 px de gouttière.
 - Accueil : l'écran sur trois colonnes, l'état et les actions sur la quatrième, puis ce qui suit. Rien n'affirme que l'écran est branché : aucun signal matériel ne le permet.
-- Formulaire : 520 px de réglages à gauche, aperçu et actions fixes à droite. Jusqu'au lot 7, la colonne de droite montre l'image actuelle de l'écran.
+- Formulaire : 520 px de réglages à gauche, aperçu et actions fixes à droite.
 - Mobile : aperçu en haut et barre d'actions fixe en bas.
 - Playlists : la frise de la journée d'abord, une ligne par playlist avec son nom dans la première colonne, puis chaque playlist et ses entrées. Le trait plein indique ce qui passe à l'écran, la trame ce qu'une autre playlist prend, le contour une playlist vide qui bloque l'écran.
 - Réglages : titre de section dans la première colonne, champs sur 640 px au maximum dans les suivantes. La barre d'enregistrement ne reste fixe que s'il y a quelque chose à dire ou à enregistrer.
@@ -48,4 +48,6 @@ Dessinées en SVG avec quatre niveaux de gris (`--art-bg`, `--art-1`, `--art-2`,
 
 ## Aperçu
 
-L'aperçu montre l'image propre qu'InkyPi enregistre avant le tramage du pilote, sans promettre un rendu fidèle. Il se met à jour avec le bouton **Update preview**, car chaque rendu HTML lance Chromium sur le Pi. Il est marqué périmé seulement si une valeur diffère de celles de l'aperçu affiché.
+L'aperçu montre l'image propre avant le tramage du pilote, recadrée comme l'écran la recadrera, sans promettre un rendu fidèle des couleurs. Il se met à jour avec le bouton **Update preview**, jamais tout seul, car chaque rendu HTML lance Chromium sur le Pi et certains plugins sont facturés. Il est marqué périmé seulement si ce que le formulaire enverrait diffère de ce qui a produit l'image affichée.
+
+Avant le premier aperçu, le cadre montre l'illustration du plugin, ou la dernière image d'une entrée existante avec sa date. Après **Show on screen**, il montre ce qui vient de partir à l'écran. Une panne laisse l'image précédente en place, marquée périmée si le formulaire a changé depuis. Une image périmée est atténuée, et sur téléphone la barre du bas le signale et propose la mise à jour, car l'aperçu est alors hors de vue.

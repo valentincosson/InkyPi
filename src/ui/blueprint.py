@@ -2,18 +2,22 @@
 
 Le bundle est versionné dans static/bundle : le Pi n'exécute jamais Node.
 """
+import io
 import logging
 import mimetypes
 import os
+import tempfile
 from datetime import datetime, timedelta
 from urllib.parse import quote
 
 import pytz
-from flask import Blueprint, abort, current_app, jsonify, request, send_from_directory
+from flask import Blueprint, abort, current_app, jsonify, request, send_file, send_from_directory
 
 from blueprints import apikeys
 from plugins.plugin_registry import get_plugin_instance
 from refresh_task import PlaylistRefresh
+from utils.app_utils import handle_request_files, parse_form
+from utils.image_utils import resize_image
 
 logger = logging.getLogger(__name__)
 
@@ -292,6 +296,56 @@ def api_keys():
     return jsonify({"keys": [{"key": key, "has_value": bool(value)} for key, value in entries]})
 
 
+def _screen_size(device_config):
+    """La taille de l'image telle qu'on la regarde : le pilote la tourne ensuite pour un écran en portrait."""
+    width, height = device_config.get_resolution()
+    return (height, width) if device_config.get_config("orientation") == "vertical" else (width, height)
+
+
+def _saved_image(device_config, instance):
+    """La dernière image générée pour une entrée, si elle a déjà tourné."""
+    if not instance or not instance.latest_refresh_time:
+        return None
+    playlist = next(playlist for playlist in device_config.get_playlist_manager().playlists if instance in playlist.plugins)
+    return {
+        "url": f"{_instance_image_url(playlist, instance)}?v={quote(instance.latest_refresh_time, safe='')}",
+        "refreshed_at": instance.latest_refresh_time,
+    }
+
+
+@ui_bp.route("/api/preview", methods=["POST"])
+def preview():
+    """Génère une image sans toucher à l'écran, à la rotation, à la configuration ni aux fichiers enregistrés."""
+    device_config = current_app.config["DEVICE_CONFIG"]
+    settings = parse_form(request.form)
+    plugin_config = device_config.get_plugin(settings.pop("plugin_id", None))
+    if not plugin_config:
+        return jsonify({"error": "Plugin not found"}), 404
+
+    output = io.BytesIO()
+    try:
+        # Le verrou du moteur évite deux rendus simultanés, de trop pour la mémoire d'un Pi Zero.
+        with tempfile.TemporaryDirectory() as uploads, current_app.config["REFRESH_TASK"].lock:
+            settings.update(handle_request_files(request.files, request.form, save_dir=uploads))
+            image = get_plugin_instance(plugin_config).generate_image(settings, device_config)
+            if image is None:
+                return jsonify({"error": "The plugin didn't produce an image."}), 500
+            # Même recadrage que le pilote : l'aperçu ne montre pas ce que l'écran coupera.
+            resize_image(image, _screen_size(device_config), plugin_config.get("image_settings", [])).save(output, format="PNG")
+    except RuntimeError as error:
+        # Les plugins lèvent cette erreur avec un message écrit pour l'utilisateur.
+        logger.exception("Could not generate the preview")
+        return jsonify({"error": str(error)}), 500
+    except Exception:
+        logger.exception("Could not generate the preview")
+        return jsonify({"error": "The plugin couldn't generate this image. Check the device logs."}), 500
+
+    output.seek(0)
+    response = send_file(output, mimetype="image/png")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 @ui_bp.route("/api/plugins")
 def plugins():
     """Liste les plugins installés, dans l'ordre choisi par l'utilisateur."""
@@ -318,6 +372,7 @@ def plugin_form(plugin_id):
     params = get_plugin_instance(plugin_config).generate_settings_template()
     params.pop("settings_template", None)
     env_entries = apikeys.parse_env_file(apikeys.get_env_path())
+    width, height = _screen_size(device_config)
     return jsonify({
         "id": plugin_id,
         "name": plugin_config["display_name"],
@@ -325,6 +380,13 @@ def plugin_form(plugin_id):
         "instance": instance_name if instance else None,
         "settings": instance.settings if instance else None,
         "refresh": instance.refresh if instance else None,
+        "device": {
+            "timezone": device_config.get_config("timezone", default="UTC"),
+            "time_format": device_config.get_config("time_format", default="12h"),
+            "width": width,
+            "height": height,
+        },
+        "saved_image": _saved_image(device_config, instance),
         "playlists": playlist_manager.get_playlist_names(),
         "keys_set": [key for key, value in env_entries if value],
     })

@@ -13,6 +13,7 @@ Ce fork refond l'interface web, à partir de novembre 2026.
 | `src/config.py` | Écriture atomique de la configuration | Novembre 2026 |
 | `src/blueprints/playlist.py`, `src/blueprints/plugin.py` | Les images ajoutées rejoignent les images existantes à la copie d'une entrée et à l'affichage immédiat | Novembre 2026 |
 | `src/blueprints/plugin.py` | La suppression d'une entrée garde les fichiers qu'une autre entrée utilise encore | Novembre 2026 |
+| `src/utils/app_utils.py` | Dossier d'enregistrement facultatif pour les fichiers reçus, utilisé par l'aperçu de la nouvelle interface | Novembre 2026 |
 | `src/blueprints/apikeys.py` | Écriture sûre du fichier `.env`, valeurs relues à l'identique, clé supprimée retirée de l'environnement | Novembre 2026 |
 | `tests/`, `scripts/dev.sh`, `pytest.ini`, `.gitignore`, `install/requirements-test.txt`, `docs/development.md`, `docs/attribution.md` | Tests, environnement de développement, attributions | Novembre 2026 |
 | `README.md`, `NOTICE.md`, `roadmap.md`, `DESIGN.md`, `CLAUDE.md`, `design/` | Documents et maquette de la refonte | Novembre 2026 |

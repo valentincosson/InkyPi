@@ -99,6 +99,7 @@ export const definitions: Record<string, Definition> = {
   },
   ai_text: {
     apiKey: { key: "OPEN_AI_SECRET" },
+    previewNote: "preview.billed",
     sections: [{ fields: [
       { kind: "text", name: "title", label: "pf.title" },
       { kind: "select", name: "textModel", label: "pf.ai.textModel", options: OPENAI_MODELS },
@@ -107,6 +108,7 @@ export const definitions: Record<string, Definition> = {
   },
   ai_image: {
     apiKey: { key: "OPEN_AI_SECRET" },
+    previewNote: "preview.billed",
     sections: [{ fields: [
       { kind: "textarea", name: "textPrompt", label: "pf.ai.prompt" },
       { kind: "switch", name: "randomizePrompt", label: "pf.ai.randomPrompt", default: false },

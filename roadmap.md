@@ -24,7 +24,7 @@ Ce fork de [fatihak/InkyPi](https://github.com/fatihak/InkyPi) refond l'interfac
 | 4. Formulaires de plugins | Moteur générique, les 20 plugins portés sur `/ui/plugin/<id>`, catalogue provisoire sur `/ui/plugins`, repli sur l'ancienne page | Terminé |
 | 5. Accueil | État réel de l'écran, à suivre, affichage du suivant, catalogue avec illustrations, recherche, tri | Terminé |
 | 6. Playlists | Page `/ui/playlists`, frise sur 24 h calculée par le moteur, priorité visible, réordonnancement, suppression, bugs corrigés | Terminé |
-| 7. Aperçu sans envoi à l'écran | Génération seule d'une image | À faire |
+| 7. Aperçu sans envoi à l'écran | Bouton Update preview, génération sans trace, état à jour ou périmé, dernière image d'une entrée | Terminé |
 
 ## Défauts relevés par la capture des formulaires
 
@@ -39,7 +39,6 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 
 ## À reprendre de la review de la maquette
 
-- **Lot 7 (aperçu) :** brancher le bouton Update preview sur une vraie génération d'image.
 - **Accessibilité et mobile :** tester sur un vrai téléphone et avec un lecteur d'écran.
 
 ## Limites connues de la transition
@@ -64,6 +63,12 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 - Comme dans l'ancienne page, un réglage masqué n'est pas renvoyé : activer la date aléatoire d'APOD oublie la date saisie à l'enregistrement.
 - L'avertissement sur une clé d'API ne regarde que `.env`. Il peut s'afficher à tort si la clé vient de l'environnement du service ; il ne bloque jamais l'envoi.
 - Après un redémarrage demandé depuis les réglages, le message reste affiché : rien ne vérifie encore le retour de l'appareil.
+- L'aperçu ne simule ni les couleurs de l'encre, ni le tramage, ni les réglages d'image de l'appareil : il montre l'image propre, recadrée pour l'écran. La dernière image d'une entrée et celle envoyée à l'écran ne sont pas recadrées, comme sur l'accueil.
+- Quitter la page pendant un aperçu ne l'interrompt pas sur l'appareil : le rendu va à son terme, jusqu'au délai du plugin s'il attend une adresse injoignable, et l'interface et le moteur attendent, comme pour tout rendu. Rien ne limite non plus la taille d'un fichier choisi, comme dans l'ancienne page.
+- Sur téléphone, le bouton d'aperçu vient après le formulaire au clavier, alors qu'il s'affiche au-dessus : le parcours reste logique (régler, puis mettre à jour), et la page défile jusqu'à lui.
+- Un plugin à contenu aléatoire ou payant (`ai_image`, `ai_text`, Unsplash, Image Folder) génère à nouveau au moment d'aller à l'écran : l'écran peut recevoir autre chose que l'aperçu. Pour OpenAI, une note le dit à côté du bouton, car chaque aperçu est facturé.
+- Les fichiers choisis repartent vers l'appareil à chaque aperçu, puis sont effacés : ils ne sont conservés qu'à l'enregistrement ou à l'envoi à l'écran.
+- Un plugin sans description garde son ancien formulaire, donc sans aperçu.
 - Le fichier `.env` est réécrit en entier à chaque changement : ses commentaires sont perdus, comme avec l'ancienne page.
 - Une valeur de clé contenant `${NOM}` est interprétée par `python-dotenv` à la relecture.
 - L'écriture sûre de `.env` demande le droit d'écrire dans le dossier du projet : sinon, l'enregistrement échoue avec une erreur et l'ancien fichier reste intact.
@@ -73,7 +78,7 @@ Les captures de `tests/snapshots/plugin_forms/` décrivent l'ancienne interface,
 
 - **Écran personnalisé :** choisir entre des zones remplies par des plugins existants, des éléments libres, ou les deux. Un essai sur Mac a assemblé trois plugins en zones sans modifier le moteur, mais certains plugins débordent à petite taille et le coût de rendu sur un Pi Zero 2 reste inconnu.
 - **Serveur à plusieurs threads :** aujourd'hui, un rendu bloque toute l'interface (`src/inkypi.py`, `threads=1`). Le changement touche au cœur et demande un test sur le Pi.
-- **Protection de `/shutdown` et de l'interface :** aucune authentification, et le serveur écoute sur tout le réseau local.
+- **Protection de `/shutdown` et de l'interface :** aucune authentification, et le serveur écoute sur tout le réseau local. Les routes d'origine et l'aperçu acceptent aussi un chemin de fichier dans le formulaire (`imageFiles[]`) : le plugin essaie de lire ce fichier sur l'appareil.
 - **Pi personnel :** faire pointer `origin` vers le fork.
 
 ## À vérifier sur un vrai Pi (facultatif)

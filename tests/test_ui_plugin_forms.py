@@ -239,6 +239,8 @@ class TestFocusAndLayout:
         link = page.get_by_role("link", name="Skip to the actions")
         link.focus()
         link.press("Enter")
+        expect(page.get_by_role("button", name="Update preview")).to_be_focused()
+        page.keyboard.press("Tab")
         expect(page.get_by_role("button", name="Show on screen")).to_be_focused()
 
     def test_colour_palette_is_one_tab_stop(self, page, server_url):

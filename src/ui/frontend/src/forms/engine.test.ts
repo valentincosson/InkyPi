@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { definitions } from "./definitions"
-import { contrastRatio, fromDraft, initialValues, isVisible, toDraft, toEntries, validate } from "./engine"
+import { contrastRatio, fromDraft, initialValues, isVisible, signatureOf, toDraft, toEntries, validate } from "./engine"
 import type { Definition, FileValue } from "./types"
 
 const params = { frame_styles: [{ name: "None" }], style_settings: false }
@@ -226,5 +226,26 @@ describe("contrastRatio", () => {
 
   it("does not depend on the order", () => {
     expect(contrastRatio("#ffffff", "#123456")).toBeCloseTo(contrastRatio("#123456", "#ffffff"))
+  })
+})
+
+describe("signatureOf", () => {
+  it("is the same for the same settings", () => {
+    expect(signatureOf([["a", "1"], ["b", "2"]])).toBe(signatureOf([["a", "1"], ["b", "2"]]))
+  })
+
+  it("changes when a value changes", () => {
+    expect(signatureOf([["a", "1"]])).not.toBe(signatureOf([["a", "2"]]))
+  })
+
+  it("tells apart two files of the same count", () => {
+    const first = new File(["one"], "one.png", { lastModified: 1 })
+    const second = new File(["other"], "other.png", { lastModified: 1 })
+    expect(signatureOf([["files[]", first]])).not.toBe(signatureOf([["files[]", second]]))
+  })
+
+  it("recognises the same file chosen again", () => {
+    const pick = () => new File(["one"], "one.png", { lastModified: 1 })
+    expect(signatureOf([["files[]", pick()]])).toBe(signatureOf([["files[]", pick()]]))
   })
 })
