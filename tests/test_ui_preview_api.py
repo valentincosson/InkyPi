@@ -2,13 +2,16 @@
 import hashlib
 import io
 import os
+import threading
 from datetime import datetime
+from types import SimpleNamespace
 
 import pytest
 from PIL import Image
 
 import ui.blueprint as ui_blueprint
 import utils.app_utils as app_utils
+import utils.image_utils as image_utils
 from refresh_task import RefreshTask
 from ui.blueprint import ui_bp
 
@@ -179,13 +182,25 @@ class TestImage:
         send(client, title="Hello")
         assert plugin.settings == {"title": "Hello"}
 
+    def test_keeps_the_extra_pixels_of_a_double_density_render(self, client, use_plugin):
+        use_plugin(FakePlugin(result=Image.new("RGB", (1600, 960), "white")))
+        assert Image.open(io.BytesIO(send(client).data)).size == (1600, 960)
+
+    def test_never_goes_beyond_double_density(self, client, use_plugin):
+        use_plugin(FakePlugin(result=Image.new("RGB", (4000, 2400), "white")))
+        assert Image.open(io.BytesIO(send(client).data)).size == (1600, 960)
+
+    def test_never_enlarges_a_small_image(self, client, use_plugin):
+        use_plugin(FakePlugin(result=Image.new("RGB", (400, 240), "white")))
+        assert Image.open(io.BytesIO(send(client).data)).size == (800, 480)
+
     def test_crops_what_the_screen_would_crop(self, client, use_plugin):
         """Une image 3:2 perd ses bords sur un écran 5:3 : l'aperçu doit le montrer."""
         tall = Image.new("RGB", (1536, 1024), "black")
         tall.paste("white", (0, 0, 1536, 50))
         use_plugin(FakePlugin(result=tall))
         image = Image.open(io.BytesIO(send(client).data)).convert("RGB")
-        assert image.size == (800, 480)
+        assert image.size == (1536, 922)
         # La bande blanche du haut sort du cadre : 1024 - 1536 * 3/5 = 102 pixels coupés, 51 de chaque côté.
         assert image.getpixel((400, 0)) == (0, 0, 0)
 
@@ -236,6 +251,67 @@ class TestEngine:
         refresh_task.running = False
         use_plugin(FakePlugin())
         assert send(client).status_code == 200
+
+
+class TestDoubleDensity:
+    @pytest.fixture
+    def chromium(self, monkeypatch):
+        """Remplace Chromium : garde les commandes reçues et échoue si le test le demande."""
+        commands = []
+        chromium = SimpleNamespace(commands=commands, fail_when=lambda command: False)
+
+        def run(command, **kwargs):
+            commands.append(command)
+            if chromium.fail_when(command):
+                return SimpleNamespace(returncode=1)
+            path = next(part.split("=", 1)[1] for part in command if part.startswith("--screenshot="))
+            Image.new("RGB", (800, 480), "white").save(path, format="PNG")
+            return SimpleNamespace(returncode=0)
+
+        monkeypatch.setattr(image_utils.subprocess, "run", run)
+        monkeypatch.setattr(image_utils, "_find_chromium_binary", lambda: "chromium")
+        return chromium
+
+    FLAG = "--force-device-scale-factor=2"
+
+    def test_the_engine_renders_at_the_size_of_the_screen(self, chromium):
+        assert image_utils.take_screenshot("page.html", (800, 480))
+        assert self.FLAG not in chromium.commands[0]
+
+    def test_the_preview_asks_for_double_density(self, chromium):
+        with image_utils.screenshot_scale(2):
+            assert image_utils.take_screenshot("page.html", (800, 480))
+        assert self.FLAG in chromium.commands[0]
+        assert "--window-size=800,480" in chromium.commands[0]
+
+    def test_the_route_renders_the_plugin_in_double_density(self, client, chromium, use_plugin):
+        use_plugin(FakePlugin(during=lambda settings: image_utils.take_screenshot("page.html", (800, 480))))
+        send(client)
+        assert self.FLAG in chromium.commands[0]
+        image_utils.take_screenshot("page.html", (800, 480))
+        assert self.FLAG not in chromium.commands[1]
+
+    def test_a_render_of_the_engine_during_a_preview_stays_at_screen_size(self, chromium):
+        with image_utils.screenshot_scale(2):
+            engine = threading.Thread(target=image_utils.take_screenshot, args=("page.html", (800, 480)))
+            engine.start()
+            engine.join()
+        assert self.FLAG not in chromium.commands[0]
+
+    def test_falls_back_to_the_size_of_the_screen_when_double_density_fails(self, chromium):
+        chromium.fail_when = lambda command: self.FLAG in command
+        with image_utils.screenshot_scale(2):
+            image = image_utils.take_screenshot("page.html", (800, 480))
+        assert image.size == (800, 480)
+        assert len(chromium.commands) == 2
+        assert self.FLAG not in chromium.commands[1]
+        first_try = next(part.split("=", 1)[1] for part in chromium.commands[0] if part.startswith("--screenshot="))
+        assert not os.path.exists(first_try)
+
+    def test_a_failure_at_screen_size_is_not_retried(self, chromium):
+        chromium.fail_when = lambda command: True
+        assert image_utils.take_screenshot("page.html", (800, 480)) is None
+        assert len(chromium.commands) == 1
 
 
 class TestFailures:

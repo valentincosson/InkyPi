@@ -359,6 +359,37 @@ class TestShownOnScreen:
         assert sent == []
 
 
+class TestSharpness:
+    def test_a_sharper_preview_of_the_same_settings_stays_after_showing_it(self, page, server_url, renders):
+        open_form(page, server_url)
+        update(page)
+        expect(preview_status(page)).to_have_text(UP_TO_DATE)
+        source = preview_image(page).get_attribute("src")
+        page.get_by_role("button", name="Show on screen").click()
+        expect(page.get_by_role("status").filter(has_text="On the screen")).to_be_visible()
+        assert preview_image(page).get_attribute("src") == source
+
+    def test_showing_other_settings_replaces_the_preview(self, page, server_url, renders):
+        open_form(page, server_url, "countdown")
+        page.get_by_label("Title").fill("Trip")
+        page.get_by_label("Date").fill("2030-01-01")
+        update(page)
+        expect(preview_status(page)).to_have_text(UP_TO_DATE)
+        page.get_by_label("Title").fill("Holidays")
+        page.get_by_role("button", name="Show on screen").click()
+        expect(preview_status(page)).to_have_text(UP_TO_DATE)
+        assert "/api/current_image" in preview_image(page).get_attribute("src")
+
+    def test_a_double_density_image_keeps_the_shape_of_the_frame(self, page, server_url):
+        page.route("**/ui/api/preview", lambda route: route.fulfill(status=200, content_type="image/png", body=png(size=(1600, 960))))
+        open_form(page, server_url)
+        update(page)
+        expect(preview_status(page)).to_have_text(UP_TO_DATE)
+        assert preview_image(page).evaluate("image => image.naturalWidth") == 1600
+        box = preview_image(page).bounding_box()
+        assert box["width"] / box["height"] == pytest.approx(800 / 480, abs=0.01)
+
+
 class TestRealRoute:
     def test_a_real_plugin_and_a_chosen_file(self, page, server_url, ui_app, tmp_path):
         """Tout le trajet, avec le vrai plugin Image Upload : rien ne doit rester."""

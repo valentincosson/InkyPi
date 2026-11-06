@@ -15,6 +15,7 @@ Ce fork refond l'interface web, à partir de novembre 2026.
 | `src/blueprints/plugin.py` | La suppression d'une entrée garde les fichiers qu'une autre entrée utilise encore | Novembre 2026 |
 | `src/utils/app_utils.py` | Dossier d'enregistrement facultatif pour les fichiers reçus, utilisé par l'aperçu de la nouvelle interface | Novembre 2026 |
 | `src/blueprints/main.py` | La page d'accueil `/` mène à la nouvelle interface | Novembre 2026 |
+| `src/utils/image_utils.py` | Densité de pixels facultative pour les rendus HTML, utilisée par l'aperçu de la nouvelle interface | Novembre 2026 |
 | `src/blueprints/apikeys.py` | Écriture sûre du fichier `.env`, valeurs relues à l'identique, clé supprimée retirée de l'environnement | Novembre 2026 |
 | `tests/`, `scripts/dev.sh`, `pytest.ini`, `.gitignore`, `install/requirements-test.txt`, `docs/development.md`, `docs/attribution.md` | Tests, environnement de développement, attributions | Novembre 2026 |
 | `README.md`, `NOTICE.md`, `roadmap.md`, `DESIGN.md`, `CLAUDE.md` | Documents de la refonte | Novembre 2026 |

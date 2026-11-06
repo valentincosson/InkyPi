@@ -197,7 +197,8 @@ function PluginForm({ plugin, definition }: { plugin: PluginData; definition: De
     try {
       await showOnScreen(plugin.id, entries())
       // L'écran vient de recevoir ces réglages : inutile de les générer une seconde fois pour les montrer.
-      setPreview({ url: `/api/current_image?v=${Date.now()}`, source: "fresh", signature })
+      // Un aperçu de ces mêmes réglages reste en place, car il est plus net que l'image envoyée.
+      setPreview((current) => (current?.signature === signature ? current : { url: `/api/current_image?v=${Date.now()}`, source: "fresh", signature }))
       setStatus({ kind: "done", text: t("form.onScreen") })
     } catch (error) {
       setStatus({ kind: "error", text: failureText(error, t, "form.showRefused") })

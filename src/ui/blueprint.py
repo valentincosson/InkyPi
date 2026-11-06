@@ -17,13 +17,15 @@ from blueprints import apikeys
 from plugins.plugin_registry import get_plugin_instance
 from refresh_task import PlaylistRefresh
 from utils.app_utils import handle_request_files, parse_form
-from utils.image_utils import resize_image
+from utils.image_utils import resize_image, screenshot_scale
 
 logger = logging.getLogger(__name__)
 
 BUNDLE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "bundle")
 ONE_YEAR = 31_536_000
 UP_NEXT_COUNT = 4
+# L'aperçu s'affiche plus grand que l'écran sur un écran Retina : à 1, il revient à la taille de l'écran et il est plus léger à générer.
+PREVIEW_SCALE = 2
 
 ui_bp = Blueprint("ui", __name__, url_prefix="/ui")
 
@@ -302,6 +304,12 @@ def _screen_size(device_config):
     return (height, width) if device_config.get_config("orientation") == "vertical" else (width, height)
 
 
+def _preview_size(image, screen):
+    """La forme de l'écran, en gardant les pixels supplémentaires de l'image sans jamais l'agrandir."""
+    scale = max(1, min(PREVIEW_SCALE, image.width / screen[0], image.height / screen[1]))
+    return round(screen[0] * scale), round(screen[1] * scale)
+
+
 def _saved_image(device_config, instance):
     """La dernière image générée pour une entrée, si elle a déjà tourné."""
     if not instance or not instance.latest_refresh_time:
@@ -325,13 +333,14 @@ def preview():
     output = io.BytesIO()
     try:
         # Le verrou du moteur évite deux rendus simultanés, de trop pour la mémoire d'un Pi Zero.
-        with tempfile.TemporaryDirectory() as uploads, current_app.config["REFRESH_TASK"].lock:
+        with tempfile.TemporaryDirectory() as uploads, current_app.config["REFRESH_TASK"].lock, screenshot_scale(PREVIEW_SCALE):
             settings.update(handle_request_files(request.files, request.form, save_dir=uploads))
             image = get_plugin_instance(plugin_config).generate_image(settings, device_config)
             if image is None:
                 return jsonify({"error": "The plugin didn't produce an image."}), 500
             # Même recadrage que le pilote : l'aperçu ne montre pas ce que l'écran coupera.
-            resize_image(image, _screen_size(device_config), plugin_config.get("image_settings", [])).save(output, format="PNG")
+            size = _preview_size(image, _screen_size(device_config))
+            resize_image(image, size, plugin_config.get("image_settings", [])).save(output, format="PNG", compress_level=1)
     except RuntimeError as error:
         # Les plugins lèvent cette erreur avec un message écrit pour l'utilisateur.
         logger.exception("Could not generate the preview")
